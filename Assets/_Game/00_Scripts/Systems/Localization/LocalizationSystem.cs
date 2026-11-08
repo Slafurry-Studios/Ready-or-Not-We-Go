@@ -17,7 +17,7 @@ namespace Slafurry.Systems.Localization
 
         public string CurrentLanguage { get; private set; } = "en";
 
-        public event Action OnLanguageChanged;
+        public event System.Action OnLanguageChanged;
 
         private const string LangKey = "Language";
 

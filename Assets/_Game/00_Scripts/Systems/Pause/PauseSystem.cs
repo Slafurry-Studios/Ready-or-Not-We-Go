@@ -23,10 +23,10 @@ namespace Slafurry.Systems.Pause
 
         public bool IsPaused => _pauseStack.Count > 0;
 
-        public event Action OnPaused;
-        public event Action OnResumed;
-        public event Action<string> OnPauseRequested;   
-        public event Action<string> OnPauseReleased;
+        public event System.Action OnPaused;
+        public event System.Action OnResumed;
+        public event System.Action<string> OnPauseRequested;   
+        public event System.Action<string> OnPauseReleased;
 
         public override IEnumerator Initialize() { yield return null; }
         public override void PostInitialize() { }
