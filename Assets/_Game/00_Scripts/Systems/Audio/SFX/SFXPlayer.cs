@@ -1,0 +1,390 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Audio;
+
+namespace Slafurry.Systems.Audio
+{
+    public class SFXPlayer : MonoBehaviour
+    {
+        [SerializeField] private SFXData sfxData;
+        [SerializeField] private AudioMixerGroup sfxMixerGroup;
+
+        private class CategoryPool
+        {
+            public AudioSource[] Sources;
+            public int OldestIndex;
+            public readonly Dictionary<AudioSource, string> Playing = new();
+            public readonly Dictionary<AudioSource, Coroutine> FadeCoroutines = new();
+            public readonly Dictionary<AudioSource, int> PlayTokens = new();
+        }
+
+        private readonly Dictionary<string, CategoryPool> _pools = new();
+
+        void Awake()
+        {
+            InitPools();
+        }
+
+        private void InitPools()
+        {
+            if (sfxData?.categories == null) return;
+
+            foreach (var category in sfxData.categories)
+            {
+                var pool = new CategoryPool
+                {
+                    Sources = new AudioSource[category.poolSize]
+                };
+
+                for (int i = 0; i < category.poolSize; i++)
+                {
+                    GameObject go = new GameObject($"SFX_{category.categoryName}_{i}");
+                    go.transform.SetParent(transform);
+
+                    AudioSource source = go.AddComponent<AudioSource>();
+                    source.playOnAwake = false;
+                    source.outputAudioMixerGroup = sfxMixerGroup;
+
+                    pool.Sources[i] = source;
+                }
+
+                _pools[category.categoryName] = pool;
+            }
+        }
+
+        private void StopFadeIfAny(CategoryPool pool, AudioSource source)
+        {
+            if (pool.FadeCoroutines.TryGetValue(source, out var co) && co != null)
+            {
+                StopCoroutine(co);
+            }
+            pool.FadeCoroutines.Remove(source);
+        }
+
+        private AudioSource GetAvailableSource(CategoryPool pool)
+        {
+            // 1) find truly idle source
+            foreach (var source in pool.Sources)
+            {
+                if (!source.isPlaying)
+                {
+                    StopFadeIfAny(pool, source);
+                    pool.Playing.Remove(source);
+                    source.loop = false;
+                    return source;
+                }
+            }
+
+            // 2) all busy -> prioritize stealing a source that is NOT fading,
+            //    so running fade-outs are not abruptly cut off.
+            //    Fading sources are only stolen if desperate (step 3).
+            AudioSource nonFadingCandidate = null;
+            foreach (var source in pool.Sources)
+            {
+                if (!pool.FadeCoroutines.ContainsKey(source))
+                {
+                    nonFadingCandidate = source;
+                    break;
+                }
+            }
+
+            // 3) fallback: all sources fading too -> forced to use old round-robin
+            AudioSource stolen = nonFadingCandidate != null ? nonFadingCandidate : pool.Sources[pool.OldestIndex];
+
+            StopFadeIfAny(pool, stolen);
+            stolen.Stop();
+            stolen.loop = false;
+            pool.Playing.Remove(stolen);
+
+            pool.OldestIndex = (pool.OldestIndex + 1) % pool.Sources.Length;
+
+            return stolen;
+        }
+
+        private int CountPlaying(CategoryPool pool, string effectName)
+        {
+            int count = 0;
+            foreach (var source in pool.Sources)
+            {
+                if (!source.isPlaying)
+                {
+                    pool.Playing.Remove(source);
+                    continue;
+                }
+
+                if (pool.Playing.TryGetValue(source, out string currentName) && currentName == effectName)
+                    count++;
+            }
+            return count;
+        }
+
+        // ========================= FADE CORE =========================
+        // Interpolation is performed in the decibel (dB) domain, not linear.
+        // This is important because SFXEffect.volume can be > 1 (boost/gain, up to clipping) —
+        // linear/quadratic fades in the amplitude domain flatline once the signal clips,
+        // feeling like they stop midway. Fades in the dB domain stay smooth
+        // regardless of the target volume magnitude.
+        private const float MinDecibel = -80f;
+
+        private static float LinearToDecibel(float linear)
+        {
+            return linear > 0.0001f ? Mathf.Log10(linear) * 20f : MinDecibel;
+        }
+
+        private static float DecibelToLinear(float db)
+        {
+            return Mathf.Pow(10f, db / 20f);
+        }
+
+        private IEnumerator FadeRoutine(CategoryPool pool, AudioSource source, float targetVolume, float duration, bool stopWhenDone)
+        {
+            float startDb = LinearToDecibel(source.volume);
+            float targetDb = LinearToDecibel(targetVolume);
+            float t = 0f;
+
+            while (t < duration)
+            {
+                t += Time.unscaledDeltaTime;
+                float linear = Mathf.Clamp01(t / duration);
+                float db = Mathf.Lerp(startDb, targetDb, linear);
+                source.volume = DecibelToLinear(db);
+                yield return null;
+            }
+
+            source.volume = targetVolume;
+
+            if (stopWhenDone)
+            {
+                source.Stop();
+                pool.Playing.Remove(source);
+            }
+
+            pool.FadeCoroutines.Remove(source);
+        }
+
+        // ========================= 3D =========================
+        // fadeIn < 0 => use default from SFXEffect.fadeIn
+        // Volume automatically follows distance to AudioListener based on
+        // minDistance/maxDistance/rolloffMode in SFXEffect. If
+        // effect.distanceOnlyNoPanning is true, sound will not pan
+        // left/right (360° spread) — good for 2D/top-down games that only
+        // need distance attenuation, not full 3D positioning.
+        public void PlaySFX3D(string categoryName, string effectName, Vector3 pos, bool loop = false, float fadeIn = -1f)
+        {
+            if (!TryPrepare(categoryName, effectName, out var pool, out var effect, out var clip))
+                return;
+
+            AudioSource source = GetAvailableSource(pool);
+            source.transform.position = pos;
+            source.spatialBlend = 1f;
+            source.loop = loop;
+            source.clip = clip;
+            source.rolloffMode = effect.rolloffMode;
+            source.minDistance = effect.minDistance;
+            source.maxDistance = effect.maxDistance;
+            source.spread = effect.distanceOnlyNoPanning ? 360f : 0f;
+            pool.Playing[source] = effectName;
+
+            float resolvedFadeIn = fadeIn < 0f ? effect.fadeIn : fadeIn;
+            StartPlaybackWithFade(pool, source, effect.volume, resolvedFadeIn);
+            ScheduleAutoTailFade(pool, source, clip, effect.fadeOut);
+        }
+
+        // ========================= 2D =========================
+        // fadeIn < 0 => use default from SFXEffect.fadeIn
+        public void PlaySFX2D(string categoryName, string effectName, bool loop = false, float fadeIn = -1f)
+        {
+            if (!TryPrepare(categoryName, effectName, out var pool, out var effect, out var clip))
+                return;
+
+            AudioSource source = GetAvailableSource(pool);
+            source.transform.position = Vector3.zero;
+            source.spatialBlend = 0f;
+            source.loop = loop;
+            source.clip = clip;
+            pool.Playing[source] = effectName;
+
+            float resolvedFadeIn = fadeIn < 0f ? effect.fadeIn : fadeIn;
+            StartPlaybackWithFade(pool, source, effect.volume, resolvedFadeIn);
+            ScheduleAutoTailFade(pool, source, clip, effect.fadeOut);
+        }
+
+        private void StartPlaybackWithFade(CategoryPool pool, AudioSource source, float targetVolume, float fadeIn)
+        {
+            // Whenever this source starts playing anew, invalidate auto tail-fade
+            // from previous play (if any) to avoid incorrectly fading the new audio.
+            pool.PlayTokens[source] = pool.PlayTokens.TryGetValue(source, out var v) ? v + 1 : 1;
+
+            if (fadeIn > 0f)
+            {
+                source.volume = 0f;
+                source.Play();
+                pool.FadeCoroutines[source] = StartCoroutine(FadeRoutine(pool, source, targetVolume, fadeIn, stopWhenDone: false));
+            }
+            else
+            {
+                source.volume = targetVolume;
+                source.Play();
+            }
+        }
+
+        // Schedule automatic fade-out at clip tail (no manual Stop call needed).
+        // This fixes clicks at clip ends that previously played without fade
+        // because the caller forgot/never called StopSFX.
+        private void ScheduleAutoTailFade(CategoryPool pool, AudioSource source, AudioClip clip, float fadeOutDuration)
+        {
+            if (fadeOutDuration <= 0f || clip == null || source.loop)
+                return;
+
+            int token = pool.PlayTokens.TryGetValue(source, out var v) ? v : 0;
+
+            float pitch = Mathf.Max(Mathf.Abs(source.pitch), 0.01f);
+            float delay = Mathf.Max((clip.length / pitch) - fadeOutDuration, 0f);
+
+            StartCoroutine(AutoTailFadeRoutine(pool, source, token, delay, fadeOutDuration));
+        }
+
+        private IEnumerator AutoTailFadeRoutine(CategoryPool pool, AudioSource source, int token, float delay, float fadeOutDuration)
+        {
+            yield return new WaitForSeconds(delay);
+
+            // If source was reused for another play prematurely, cancel.
+            if (!pool.PlayTokens.TryGetValue(source, out var currentToken) || currentToken != token)
+                yield break;
+
+            if (source.isPlaying)
+                StopSourceWithFade(pool, source, fadeOutDuration);
+        }
+
+        // ========================= STOP =========================
+        // fadeOut < 0 => use per-effect default from SFXEffect.fadeOut
+        public void StopAllSFX(float fadeOut = -1f)
+        {
+            foreach (var kvp in _pools)
+            {
+                string categoryName = kvp.Key;
+                CategoryPool pool = kvp.Value;
+
+                foreach (var source in pool.Sources)
+                {
+                    if (!source.isPlaying)
+                        continue;
+
+                    float resolvedFadeOut = ResolveFadeOut(categoryName, pool, source, fadeOut);
+                    StopSourceWithFade(pool, source, resolvedFadeOut);
+                }
+            }
+        }
+
+        public void StopCategory(string categoryName, float fadeOut = -1f)
+        {
+            if (!_pools.TryGetValue(categoryName, out var pool))
+                return;
+
+            foreach (var source in pool.Sources)
+            {
+                if (!source.isPlaying)
+                    continue;
+
+                float resolvedFadeOut = ResolveFadeOut(categoryName, pool, source, fadeOut);
+                StopSourceWithFade(pool, source, resolvedFadeOut);
+            }
+        }
+
+        public void StopSFX(string categoryName, string effectName, float fadeOut = -1f)
+        {
+            if (!_pools.TryGetValue(categoryName, out var pool))
+                return;
+
+            float resolvedFadeOut = fadeOut;
+            if (resolvedFadeOut < 0f)
+            {
+                var effect = sfxData.GetSFXEffect(categoryName, effectName);
+                resolvedFadeOut = effect?.fadeOut ?? 0f;
+            }
+
+            foreach (var source in pool.Sources)
+            {
+                if (!source.isPlaying)
+                    continue;
+
+                if (pool.Playing.TryGetValue(source, out string currentName) &&
+                    currentName == effectName)
+                {
+                    StopSourceWithFade(pool, source, resolvedFadeOut);
+                }
+            }
+        }
+
+        private float ResolveFadeOut(string categoryName, CategoryPool pool, AudioSource source, float fadeOut)
+        {
+            if (fadeOut >= 0f)
+                return fadeOut;
+
+            if (pool.Playing.TryGetValue(source, out string effectName))
+            {
+                var effect = sfxData.GetSFXEffect(categoryName, effectName);
+                if (effect != null)
+                    return effect.fadeOut;
+            }
+
+            return 0f;
+        }
+
+        private void StopSourceWithFade(CategoryPool pool, AudioSource source, float fadeOut)
+        {
+            if (!source.isPlaying)
+                return;
+
+            StopFadeIfAny(pool, source);
+
+            // If clip does not loop, don't request fade longer than remaining clip —
+            // if forced, audio ends before fade reaches 0,
+            // sounding like an abrupt cut instead of a fade.
+            if (fadeOut > 0f && !source.loop && source.clip != null)
+            {
+                float pitch = Mathf.Max(Mathf.Abs(source.pitch), 0.01f);
+                float remaining = Mathf.Max((source.clip.length - source.time) / pitch, 0f);
+                fadeOut = Mathf.Min(fadeOut, remaining);
+            }
+
+            if (fadeOut > 0f)
+            {
+                pool.FadeCoroutines[source] = StartCoroutine(FadeRoutine(pool, source, 0f, fadeOut, stopWhenDone: true));
+            }
+            else
+            {
+                source.Stop();
+                pool.Playing.Remove(source);
+            }
+        }
+
+        // ========================= Shared lookup =========================
+        private bool TryPrepare(string categoryName, string effectName, out CategoryPool pool, out SFXEffect effect, out AudioClip clip)
+        {
+            pool = null;
+            effect = null;
+            clip = null;
+
+            if (!_pools.TryGetValue(categoryName, out pool))
+            {
+                Debug.LogWarning($"[SFXPlayer] Category '{categoryName}' not found.");
+                return false;
+            }
+
+            effect = sfxData.GetSFXEffect(categoryName, effectName);
+            if (effect == null || effect.clips == null || effect.clips.Length == 0)
+            {
+                Debug.LogWarning($"[SFXPlayer] SFX '{categoryName}/{effectName}' not found.");
+                return false;
+            }
+
+            if (CountPlaying(pool, effectName) >= effect.maxSimultaneous)
+                return false;
+
+            clip = effect.clips[Random.Range(0, effect.clips.Length)];
+            return true;
+        }
+    }
+}
