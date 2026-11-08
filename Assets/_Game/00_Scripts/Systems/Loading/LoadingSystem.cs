@@ -29,9 +29,9 @@ namespace Slafurry.Systems
         private bool _snapshotTaken;
         private Coroutine _lateBatchRoutine;
 
-        public event Action<float> OnProgressChanged;
-        public event Action<string> OnStatusChanged;
-        public event Action OnLoadingComplete;
+        public event System.Action<float> OnProgressChanged;
+        public event System.Action<string> OnStatusChanged;
+        public event System.Action OnLoadingComplete;
 
         public void Register(IInitializable obj)
         {

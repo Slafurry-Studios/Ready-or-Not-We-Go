@@ -15,10 +15,10 @@ namespace Slafurry.Systems.Scene
 
     public class SceneLoader : GameSystem<SceneLoader>
     {
-        public event Action<string> OnSceneLoadStarted;
-        public event Action<float> OnSceneLoadProgress;
-        public event Action<string> OnSceneLoadCompleted;
-        public event Action<string, Action> OnBeforeSceneLoad;
+        public event System.Action<string> OnSceneLoadStarted;
+        public event System.Action<float> OnSceneLoadProgress;
+        public event System.Action<string> OnSceneLoadCompleted;
+        public event System.Action<string, System.Action> OnBeforeSceneLoad;
 
         private bool _isLoading;
 
