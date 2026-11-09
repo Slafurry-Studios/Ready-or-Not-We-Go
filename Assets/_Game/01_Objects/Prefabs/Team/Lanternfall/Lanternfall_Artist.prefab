@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6310008014850152510
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2127701253918726638}
+  - component: {fileID: 4190506902420798739}
+  - component: {fileID: 8047033869506216057}
+  - component: {fileID: 4252147042673074074}
+  m_Layer: 0
+  m_Name: Lanternfall_Artist
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2127701253918726638
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6310008014850152510}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4190506902420798739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6310008014850152510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d71570481c6aebc288c5333fd9e46a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Team
+  _id: Lanternfall_Artist
+  _name: artsy
+  _teamRole: 2
+  _teamCondition: 0
+  _energyStatus: {fileID: 8047033869506216057}
+  _suspicionStatus: {fileID: 4252147042673074074}
+  _tasks: []
+  _teamFamiliarities: []
+  _actionCollection:
+  - {fileID: 11400000, guid: 6a2d6a19b5c64a7a9c0e51a6d624a075, type: 2}
+  - {fileID: 11400000, guid: 014db1d08be449b8a72c3cb6634c1d01, type: 2}
+  - {fileID: 11400000, guid: 02751f10bbcb41418431db8620cf722c, type: 2}
+  - {fileID: 11400000, guid: 65fdf9522eff422da1ea9ea977fc99ef, type: 2}
+  - {fileID: 11400000, guid: ac37fcbef6b346c587b68997db335b5a, type: 2}
+  - {fileID: 11400000, guid: caddee8ea5d7474f92f69f11d0f47d00, type: 2}
+  - {fileID: 11400000, guid: 25aa4a932c96440388d3d585eb2dac32, type: 2}
+  - {fileID: 11400000, guid: 383e36494339436988251408aff722b2, type: 2}
+  - {fileID: 11400000, guid: 1bdc901e8acf4476a4647372eec3350a, type: 2}
+  - {fileID: 11400000, guid: 9102d2ccdb3343cab228a3f378e1bc99, type: 2}
+  - {fileID: 11400000, guid: ea2e371bc1d342569dcba0f35714f453, type: 2}
+  - {fileID: 11400000, guid: 3ad1e5c52b50467dadc1d3daf8c8af60, type: 2}
+  - {fileID: 11400000, guid: 714f32319f1a485897d6d98c14870b82, type: 2}
+  - {fileID: 11400000, guid: 56812cb6e7384d5ca18e2caeb6f6ada3, type: 2}
+  - {fileID: 11400000, guid: 932e7476445941699e2c31372487bca2, type: 2}
+  - {fileID: 11400000, guid: be98712b39ad48b08e12109fe9275fe0, type: 2}
+  - {fileID: 11400000, guid: 63c3d109479d42ad989e87c1797bffa0, type: 2}
+  - {fileID: 11400000, guid: 767bfe00bfcf4063b8b1b7220af0c328, type: 2}
+  - {fileID: 11400000, guid: 56661d2b6ab54f01bf05b37ea3e3bd10, type: 2}
+  - {fileID: 11400000, guid: 5a6cb3d0f28e41d69228c722c5f052d2, type: 2}
+  - {fileID: 11400000, guid: f07f6a11423a40c0b46428b7a5221746, type: 2}
+  - {fileID: 11400000, guid: 563cd0c6466340069aa590834b01a716, type: 2}
+  - {fileID: 11400000, guid: 77280d9334ba441cbaea41dc5a6e287c, type: 2}
+  - {fileID: 11400000, guid: 33fbc3ed3fd7467eb541fb93cc1c74c6, type: 2}
+  - {fileID: 11400000, guid: 22b12a2dbe7845d99750e2be9f67f4e1, type: 2}
+  - {fileID: 11400000, guid: dc35e0761ebb425d9d8c570d4e5cdc90, type: 2}
+  - {fileID: 11400000, guid: ff8fd34fd38e4beeabc09d79015f9695, type: 2}
+  _availableActions: []
+--- !u!114 &8047033869506216057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6310008014850152510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9271b20398dd9db908718c40f59225ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnergyStatus
+  _energyConsumptionRate: 1
+--- !u!114 &4252147042673074074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6310008014850152510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e06b2932fffb28b3a6830ee71816496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SuspicionStatus

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d66c29aa517666b5bacd0687df271e7, type: 3}
+  m_Name: 03_Vertical Slice
+  m_EditorClassIdentifier: Assembly-CSharp::Sprint
+  _sprintName: Vertical slice
+  _sprintTasks:
+  - {fileID: 11400000, guid: def57694690cc1529968c27051bba226, type: 2}
+  - {fileID: 11400000, guid: 4e1f80fa9352bfedf94710ce56d36d09, type: 2}
+  - {fileID: 11400000, guid: 0b0b38abe3242f289a4e0514057f80e9, type: 2}
+  - {fileID: 11400000, guid: a45289216798694bfba84b3e8fa07296, type: 2}
+  - {fileID: 11400000, guid: 575e97c0fba51cac293b571af164e0b0, type: 2}
+  - {fileID: 11400000, guid: bfaf9a6f055adda6ea51ac40cbc5901f, type: 2}

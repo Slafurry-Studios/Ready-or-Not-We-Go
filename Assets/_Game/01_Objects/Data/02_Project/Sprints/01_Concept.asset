@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d66c29aa517666b5bacd0687df271e7, type: 3}
+  m_Name: 01_Concept
+  m_EditorClassIdentifier: Assembly-CSharp::Sprint
+  _sprintName: Concept
+  _sprintTasks:
+  - {fileID: 11400000, guid: 99f560384a0d1007cbb5926dae25fa7c, type: 2}
+  - {fileID: 11400000, guid: 953fd0e4a2cec4743855e1b223f01697, type: 2}
+  - {fileID: 11400000, guid: d255dff09c269cb3cb03b09b4aab5df8, type: 2}
+  - {fileID: 11400000, guid: 2ffb65abb81264208ae6923cfa0e9466, type: 2}
+  - {fileID: 11400000, guid: 790f8c8444aa9a90c9f5250303611653, type: 2}
+  - {fileID: 11400000, guid: beaffa04e146c499989721c79ebb5df1, type: 2}

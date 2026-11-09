@@ -3,6 +3,6 @@ using UnityEngine;
 [System.Serializable]
 public class TeamFamiliarity
 {
-    public string Team;
+    public Team Team;
     public FamiliarityStatus familiarityStatus;
 }

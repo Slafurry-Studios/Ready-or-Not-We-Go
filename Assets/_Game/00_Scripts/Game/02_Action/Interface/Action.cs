@@ -1,13 +1,35 @@
 using UnityEngine;
 
-public class Action
+[CreateAssetMenu(fileName = "Action Data", menuName = "Action Data")]
+public class Action : ScriptableObject
 {
-    public string ActionName;
-    public StatusModifier[] StatusModifiers;
+    [Header("Action Info")]
+    [SerializeField] private string _actionId;
+    [SerializeField] private string _actionName;
 
-    public virtual void Execute()
-    {
-        Debug.Log("Executing action: " + ActionName);
-    }
+    [Header("Action Settings")]
+    [SerializeField] private float _duration;
+    [SerializeField] private float _energyUsed;
+    [SerializeField] private float _suspicionGenerated;
+
+    [Header("Action Requirements")]
+    [SerializeField] private Information[] _requiredInformation;
+    [SerializeField] private int MinimumDay = 0;
+
+    [Header("Modifiers & Rewards")]
+    [SerializeField] private Memory[] _informationGotten;
+    [SerializeField] private Action[] _nextActions;
+    [SerializeField] private ActionExecution _actionExecution;
+
+    public string ActionId => _actionId;
+    public string ActionName => _actionName;
+    public float Duration => _duration;
+    public float EnergyUsed => _energyUsed;
+    public float SuspicionGenerated => _suspicionGenerated;
+    public Information[] RequiredInformation => _requiredInformation;
+    public int MinimumDayRequirement => MinimumDay;
+    public Memory[] InformationGotten => _informationGotten;
+    public Action[] NextActions => _nextActions;
+
+    public ActionExecution ActionExecution => _actionExecution;
 }
-

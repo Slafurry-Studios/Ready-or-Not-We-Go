@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f128c7f9cb25ca2094e840e6815e44e, type: 3}
+  m_Name: A-12
+  m_EditorClassIdentifier: Assembly-CSharp::Action
+  _actionId: A-12
+  _actionName: Compile Location Notebook
+  _duration: 30
+  _energyUsed: 2
+  _suspicionGenerated: 0
+  _requiredInformation: []
+  MinimumDay: 0
+  _informationGotten:
+  - MemoryName: Location Deduction
+    DecayRate: 0.01
+    RecallTime: 6
+    MemorySize: 3
+    information: {fileID: 11400000, guid: 79145bb53d23475ebd3eb91a3905cbba, type: 2}
+  _nextActions:
+  - {fileID: 11400000, guid: 56661d2b6ab54f01bf05b37ea3e3bd10, type: 2}

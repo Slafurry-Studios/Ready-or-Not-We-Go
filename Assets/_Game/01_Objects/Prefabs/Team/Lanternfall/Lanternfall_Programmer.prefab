@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6310008014850152510
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2127701253918726638}
+  - component: {fileID: 4190506902420798739}
+  - component: {fileID: 8047033869506216057}
+  - component: {fileID: 4252147042673074074}
+  m_Layer: 0
+  m_Name: Lanternfall_Programmer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2127701253918726638
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6310008014850152510}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4190506902420798739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6310008014850152510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d71570481c6aebc288c5333fd9e46a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Team
+  _id: Lanternfall_Programmer
+  _name: 0xdebug
+  _teamRole: 0
+  _teamCondition: 0
+  _energyStatus: {fileID: 8047033869506216057}
+  _suspicionStatus: {fileID: 4252147042673074074}
+  _tasks: []
+  _teamFamiliarities: []
+  _actionCollection:
+  - {fileID: 11400000, guid: e3a0c92daf7b47dbaf1b61dc74e7cb8a, type: 2}
+  - {fileID: 11400000, guid: 0f65e411c604440baef3bf1f8a177490, type: 2}
+  - {fileID: 11400000, guid: abfef07475904a4cb2449b31afcd9ce9, type: 2}
+  - {fileID: 11400000, guid: b93cb46d1a684b7098e88b89662c95af, type: 2}
+  - {fileID: 11400000, guid: 5023e92b8856405a81e21159e4fbafbf, type: 2}
+  - {fileID: 11400000, guid: 060167035acd4e5ab6813b0b18e1ae94, type: 2}
+  - {fileID: 11400000, guid: c7142f04471d4f9581ec96d62417fc88, type: 2}
+  - {fileID: 11400000, guid: 36306c1ef8c549d8ad84f8c659783b18, type: 2}
+  - {fileID: 11400000, guid: 999a50fb7c914005a59cc81edf9d5ac8, type: 2}
+  _availableActions: []
+--- !u!114 &8047033869506216057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6310008014850152510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9271b20398dd9db908718c40f59225ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnergyStatus
+  _energyConsumptionRate: 1
+--- !u!114 &4252147042673074074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6310008014850152510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e06b2932fffb28b3a6830ee71816496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SuspicionStatus

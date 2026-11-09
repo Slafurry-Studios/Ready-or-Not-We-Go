@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c629e5ecf7baea459e5daa54b7bf550, type: 3}
+  m_Name: Lanternfall
+  m_EditorClassIdentifier: Assembly-CSharp::Project
+  _projectName: Lanternfall
+  _sprints:
+  - {fileID: 11400000, guid: 81ad972ae121e7850b0a190e597d50ee, type: 2}
+  - {fileID: 11400000, guid: dbad23be354913316aee6c4c1317caac, type: 2}
+  - {fileID: 11400000, guid: 3c9f283258532ce7688f52971238db21, type: 2}
+  - {fileID: 11400000, guid: 6aa6d7fdbee76bacda2b74cb1bb79619, type: 2}
+  - {fileID: 11400000, guid: b943170dad418e9d1a4b043948be1aac, type: 2}
+  - {fileID: 11400000, guid: afbfeb7886815ebe383842f66b0ccc46, type: 2}
+  - {fileID: 11400000, guid: 83d94764433a9f62b90dca8451fbef16, type: 2}
+  _maxProgress: 100

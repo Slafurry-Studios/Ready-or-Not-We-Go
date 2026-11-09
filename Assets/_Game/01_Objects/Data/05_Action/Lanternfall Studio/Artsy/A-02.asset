@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f128c7f9cb25ca2094e840e6815e44e, type: 3}
+  m_Name: A-02
+  m_EditorClassIdentifier: Assembly-CSharp::Action
+  _actionId: A-02
+  _actionName: Browse Art Reference
+  _duration: 30
+  _energyUsed: 3
+  _suspicionGenerated: -0.5
+  _requiredInformation: []
+  MinimumDay: 2
+  _statusModifiers: []
+  _informationGotten: []
+  _nextActions:
+  - {fileID: 11400000, guid: 02751f10bbcb41418431db8620cf722c, type: 2}
+  - {fileID: 11400000, guid: 65fdf9522eff422da1ea9ea977fc99ef, type: 2}
+  - {fileID: 11400000, guid: ac37fcbef6b346c587b68997db335b5a, type: 2}
+  - {fileID: 11400000, guid: caddee8ea5d7474f92f69f11d0f47d00, type: 2}
+  - {fileID: 11400000, guid: 25aa4a932c96440388d3d585eb2dac32, type: 2}
+  - {fileID: 11400000, guid: 383e36494339436988251408aff722b2, type: 2}
+  - {fileID: 11400000, guid: 1bdc901e8acf4476a4647372eec3350a, type: 2}
+  - {fileID: 11400000, guid: 9102d2ccdb3343cab228a3f378e1bc99, type: 2}
+  - {fileID: 11400000, guid: ea2e371bc1d342569dcba0f35714f453, type: 2}
+  - {fileID: 11400000, guid: 3ad1e5c52b50467dadc1d3daf8c8af60, type: 2}

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f128c7f9cb25ca2094e840e6815e44e, type: 3}
+  m_Name: A-16
+  m_EditorClassIdentifier: Assembly-CSharp::Action
+  _actionId: A-16
+  _actionName: Search Old Files
+  _duration: 60
+  _energyUsed: 4
+  _suspicionGenerated: 3
+  _requiredInformation: []
+  MinimumDay: 0
+  _informationGotten:
+  - MemoryName: Old Employee File
+    DecayRate: 0.01
+    RecallTime: 6
+    MemorySize: 3
+    information: {fileID: 11400000, guid: 0e5b30a8e5d446f7b976b201ad284ee6, type: 2}
+  _nextActions: []

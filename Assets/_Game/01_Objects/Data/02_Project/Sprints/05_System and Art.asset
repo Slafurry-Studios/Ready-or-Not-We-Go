@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d66c29aa517666b5bacd0687df271e7, type: 3}
+  m_Name: 05_System and Art
+  m_EditorClassIdentifier: Assembly-CSharp::Sprint
+  _sprintName: Systems and art
+  _sprintTasks:
+  - {fileID: 11400000, guid: 84e584eb6c52fe19a8bea2046279f673, type: 2}
+  - {fileID: 11400000, guid: d6807b7c5f48a15558214fa066b46b1a, type: 2}
+  - {fileID: 11400000, guid: f2f498f0a6a927baf958b19385b756f6, type: 2}
+  - {fileID: 11400000, guid: b8974af405b54e669a8af9f8da1bdf8c, type: 2}
+  - {fileID: 11400000, guid: 9e90e3f33567a7f9a8081319236377b8, type: 2}
+  - {fileID: 11400000, guid: fa475f4a946aa3c53b5f46373701a52b, type: 2}
