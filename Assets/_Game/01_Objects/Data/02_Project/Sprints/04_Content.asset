@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d66c29aa517666b5bacd0687df271e7, type: 3}
+  m_Name: 04_Content
+  m_EditorClassIdentifier: Assembly-CSharp::Sprint
+  _sprintName: Content
+  _sprintTasks:
+  - {fileID: 11400000, guid: 432e1ac3df4f9dac8889daa8a435df30, type: 2}
+  - {fileID: 11400000, guid: 3d7867663637fb2e38563d6ff30e13e8, type: 2}
+  - {fileID: 11400000, guid: 259939141d37a11faa9e1765426a221c, type: 2}
+  - {fileID: 11400000, guid: 62e20fa84dd60dcb79a2132e0d433175, type: 2}
+  - {fileID: 11400000, guid: abba5118d67de71ad893ea4a57510f9f, type: 2}
+  - {fileID: 11400000, guid: 774d00e29069513729c67e7929168592, type: 2}

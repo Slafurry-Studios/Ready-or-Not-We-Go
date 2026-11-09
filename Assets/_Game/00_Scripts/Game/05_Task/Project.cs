@@ -4,7 +4,7 @@ using UnityEngine;
 public class Project : ScriptableObject
 {
     [SerializeField] private string _projectName;
-    [SerializeField] private readonly Sprint[] _sprints;
+    [SerializeField] private Sprint[] _sprints;
     [SerializeField] private int _maxProgress = 100;
 
     public string ProjectName => _projectName;

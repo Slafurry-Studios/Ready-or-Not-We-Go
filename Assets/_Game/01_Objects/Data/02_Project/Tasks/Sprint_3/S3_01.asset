@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70cf7c4b467aea1368b9e19d5ee70be1, type: 3}
+  m_Name: S3_01
+  m_EditorClassIdentifier: Assembly-CSharp::Task
+  _taskId: S3-01
+  _taskName: Battle system
+  _energyNeeded: 25
+  _timeNeeded: 180
+  _roleForTask: 0
+  _unexpectedInterval: 1.5
+  _projectProgress: 3.5
+  _dependsBy:
+  - {fileID: 11400000, guid: d03834ffdb9e4823491b2fba1aac51d1, type: 2}
+  - {fileID: 11400000, guid: a75172379114f10d397a1f32e010a5b9, type: 2}

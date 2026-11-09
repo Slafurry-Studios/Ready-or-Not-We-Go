@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f128c7f9cb25ca2094e840e6815e44e, type: 3}
+  m_Name: A-01
+  m_EditorClassIdentifier: Assembly-CSharp::Action
+  _actionId: A-01
+  _actionName: Listen to Surroundings
+  _duration: 20
+  _energyUsed: 1
+  _suspicionGenerated: 0
+  _requiredInformation: []
+  _statusModifiers: []
+  _informationGotten:
+  - MemoryName: Room Sound
+    DecayRate: 0.05
+    RecallTime: 3
+    MemorySize: 1
+    information: {fileID: 11400000, guid: 3cef3faa437109474b1b0e0b2948190d, type: 2}
+  _nextActions:
+  - {fileID: 11400000, guid: 767bfe00bfcf4063b8b1b7220af0c328, type: 2}

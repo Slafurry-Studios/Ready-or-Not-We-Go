@@ -7,5 +7,5 @@ public class Memory
     public float DecayRate;
     public float RecallTime;
     public float MemorySize;
-    public MemoryStatus MemoryStatus;
+    public Information information;
 }

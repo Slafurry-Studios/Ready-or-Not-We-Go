@@ -1,7 +1,8 @@
 using UnityEngine;
 
-public class TeamCollection : MonoBehaviour
+[CreateAssetMenu(fileName = "Team Collection Data", menuName = "Team Collection Data")]
+public class TeamCollection : ScriptableObject
 {
-    [SerializeField] public readonly Team[] _teams;
+    [SerializeField] public Team[] _teams;
     public Team[] Teams => _teams;
 }
