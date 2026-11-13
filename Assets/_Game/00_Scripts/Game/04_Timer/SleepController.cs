@@ -9,12 +9,14 @@ public class SleepController : MonoBehaviour
     [SerializeField] private EnergyStatus _energyStatus;
     [SerializeField] private PendulumMiniGame _miniGame;
     [SerializeField] private UIFade _fadePanel;
+    [SerializeField] private TaskRunner _taskRunner;
+    [SerializeField] private ActionRunner _actionRunner;
 
     [Header("Sleep Settings")]
     [SerializeField] private float _normalSleepMultiplier = 4f;
     [SerializeField] private float _deepSleepMultiplier = 8f;
     [SerializeField] private float _deepSleepWakeUpEnergy = 90f;
-    [SerializeField] private float _maxDeepSleepHours = 10f;
+    [SerializeField] private float _minDeepSleepHours = 2f;
     [SerializeField] private float _fadeDuration = 0.5f;
 
     [Header("Events")]
@@ -23,7 +25,7 @@ public class SleepController : MonoBehaviour
 
     private bool _isSleeping;
     private bool _isDeepSleeping;
-    private float _deepSleepStartTime;
+    private float _sleepStartTime;
 
     public bool IsSleeping => _isSleeping;
     public bool IsDeepSleeping => _isDeepSleeping;
@@ -45,11 +47,24 @@ public class SleepController : MonoBehaviour
         if (_timeCounter == null || _energyStatus == null)
             return;
 
+        // If energy is already full, there is no need to sleep — end immediately
+        // without starting the mini game or skipping any time.
+        if (_energyStatus.CurrentValue >= _energyStatus.MaxValue)
+        {
+            EndSleep();
+            return;
+        }
+
         _isSleeping = true;
         _isDeepSleeping = false;
+        _sleepStartTime = _timeCounter.CurrentTime;
 
         _energyStatus.SetSleeping(true);
         _timeCounter.SetTimeMultiplier(_normalSleepMultiplier);
+
+        // Pause tasks and actions while sleeping; they resume on wake up.
+        _taskRunner?.PauseAll();
+        _actionRunner?.PauseAll();
 
         if (_miniGame != null)
             _miniGame.StartGame();
@@ -60,14 +75,21 @@ public class SleepController : MonoBehaviour
         );
     }
 
-    public void StartDeepSleep()
+    public bool StartDeepSleep()
     {
         if (_timeCounter == null || _energyStatus == null)
-            return;
+            return false;
+
+        // Do not enter deep sleep if energy is already above the wake-up threshold.
+        if (_energyStatus.CurrentValue > _deepSleepWakeUpEnergy)
+        {
+            Debug.Log("Energy already above wake-up threshold; skipping deep sleep.");
+            return false;
+        }
 
         _isSleeping = true;
         _isDeepSleeping = true;
-        _deepSleepStartTime = _timeCounter.CurrentTime;
+        _sleepStartTime = _timeCounter.CurrentTime;
 
         // Resolve the fade panel automatically if not assigned in the Inspector.
         if (_fadePanel == null)
@@ -75,6 +97,10 @@ public class SleepController : MonoBehaviour
 
         _energyStatus.SetSleeping(true);
         _timeCounter.SetTimeMultiplier(_deepSleepMultiplier);
+
+        // Pause tasks and actions while sleeping; they resume on wake up.
+        _taskRunner?.PauseAll();
+        _actionRunner?.PauseAll();
 
         // Fade in the black panel when deep sleep begins.
         if (_fadePanel != null)
@@ -89,6 +115,8 @@ public class SleepController : MonoBehaviour
             _energyStatus.CurrentValue,
             _energyStatus.MaxValue
         );
+
+        return true;
     }
 
     public void EndSleep()
@@ -98,11 +126,35 @@ public class SleepController : MonoBehaviour
 
         bool wasDeepSleeping = _isDeepSleeping;
 
+        // Calculate elapsed game hours during sleep for other-AI progress simulation.
+        float elapsedHours = 0f;
+        if (_timeCounter != null)
+        {
+            float secondsPerHour = 60f * _timeCounter.MinuteToSecondRatio;
+            elapsedHours = (_timeCounter.CurrentTime - _sleepStartTime) / secondsPerHour;
+        }
+
+        // Let non-player AI characters progress on tasks/actions during sleep.
+        if (elapsedHours > 0f && _taskRunner != null)
+        {
+            Team playerTeam = _taskRunner.PlayerTeam;
+            foreach (var team in _taskRunner.GetAllTeams())
+            {
+                if (team == null || team == playerTeam) continue;
+                _taskRunner.SimulateTaskProgressForSleep(team, elapsedHours);
+                _actionRunner?.SimulateActionProgressForSleep(team, elapsedHours);
+            }
+        }
+
         _isSleeping = false;
         _isDeepSleeping = false;
 
         _energyStatus.SetSleeping(false);
         _timeCounter.SetTimeMultiplier(1f);
+
+        // Resume tasks and actions that were paused during sleep.
+        _taskRunner?.ResumeAll();
+        _actionRunner?.ResumeAll();
 
         Debug.Log("Character woke up!");
 
@@ -121,17 +173,17 @@ public class SleepController : MonoBehaviour
         if (!_isSleeping)
             return;
 
-        // Deep sleep ends when energy reaches 90, or the maximum sleep
-        // duration (8-10 hours) has passed, whichever comes first.
+        // Deep sleep ends when energy reaches 90 AND at least 2 hours have passed.
+        // No maximum cap — sleep continues until energy recovers (min 2 hours).
         if (_isDeepSleeping)
         {
             float secondsPerHour = 60f * _timeCounter.MinuteToSecondRatio;
-            float elapsedHours = (_timeCounter.CurrentTime - _deepSleepStartTime) / secondsPerHour;
+            float elapsedHours = (_timeCounter.CurrentTime - _sleepStartTime) / secondsPerHour;
 
             bool energyReached = currentEnergy >= _deepSleepWakeUpEnergy;
-            bool maxTimeReached = elapsedHours >= _maxDeepSleepHours;
+            bool minTimeReached = elapsedHours >= _minDeepSleepHours;
 
-            if (energyReached || maxTimeReached)
+            if (energyReached && minTimeReached)
             {
                 EndSleep();
                 return;

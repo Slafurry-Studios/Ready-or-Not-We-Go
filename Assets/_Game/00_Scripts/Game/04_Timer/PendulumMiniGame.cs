@@ -230,11 +230,19 @@ public class PendulumMiniGame : MonoBehaviour
         if (!_isPlaying)
             return;
 
+        // Deep sleep is skipped if energy is already above the wake-up threshold.
+        // Do NOT fall back to an 8-hour time skip — just end sleep immediately.
+        if (!_sleepController.StartDeepSleep())
+        {
+            _isPlaying = false;
+            _sleepController.EndSleep();
+            Debug.Log("Deep sleep skipped — energy already above wake-up threshold.");
+            return;
+        }
+
         _isPlaying = false;
         _isDeepSleeping = true;
         _lastPressTime = -10f;
-
-        _sleepController.StartDeepSleep();
 
         Debug.Log("Character entered deep sleep after 2 misses!");
     }
@@ -257,6 +265,15 @@ public class PendulumMiniGame : MonoBehaviour
     {
         if (!_isPlaying)
             return;
+
+        // Do not skip time if energy is already full — nothing to recover.
+        if (_energyStatus != null && _energyStatus.CurrentValue >= _energyStatus.MaxValue)
+        {
+            _isPlaying = false;
+            _sleepController.EndSleep();
+            Debug.Log("Energy already full — sleep ended without time skip.");
+            return;
+        }
 
         _isPlaying = false;
 
