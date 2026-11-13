@@ -46,7 +46,8 @@ public class WorkBtn : MonoBehaviour
 
         var status = _team.GetTaskStatus(_task);
         bool anyInProgress = _team.IsAnyTaskInProgress();
-        _button.interactable = status == TaskStatus.NOT_STARTED && !anyInProgress;
+        bool depsMet = _team.CanExecuteTask(_task);
+        _button.interactable = status == TaskStatus.NOT_STARTED && !anyInProgress && depsMet;
 
         if (status == TaskStatus.IN_PROGRESS)
         {
@@ -96,7 +97,7 @@ public class WorkBtn : MonoBehaviour
     {
         if (_button == null || _team == null || _task == null) return;
 
-        bool canInteract = _team.GetTaskStatus(_task) == TaskStatus.NOT_STARTED
+        bool canInteract = _team.CanExecuteTask(_task)
             && !_team.IsAnyTaskInProgress();
 
         _button.interactable = canInteract;

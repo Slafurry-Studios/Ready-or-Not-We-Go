@@ -50,6 +50,7 @@ public class TaskPopup : MonoBehaviour
         UpdateDescription();
 
         SelectVariant(TaskVariant.Normal);
+        RefreshVariantButtons();
     }
 
     private void UpdateDescription()
@@ -68,6 +69,22 @@ public class TaskPopup : MonoBehaviour
         if (_currentTask.ProjectProgress != 0)
             description.AppendLine($"Project Progress: {_currentTask.ProjectProgress}%");
 
+        // Show dependency blockers
+        if (_team != null)
+        {
+            var blocked = _team.GetBlockedDependencies(_currentTask);
+            if (blocked != null && blocked.Length > 0)
+            {
+                description.AppendLine();
+                description.AppendLine("Blocked by:");
+                foreach (var dep in blocked)
+                {
+                    if (dep == null) continue;
+                    description.AppendLine($"- {dep.TaskName}");
+                }
+            }
+        }
+
         _descTxt.text = description.ToString().TrimEnd();
     }
 
@@ -85,12 +102,26 @@ public class TaskPopup : MonoBehaviour
         _selectedVariant = variant;
     }
 
+    private void RefreshVariantButtons()
+    {
+        bool canExecute = _team != null && _team.CanExecuteTask(_currentTask);
+
+        if (_slowBtn != null)
+            _slowBtn.interactable = canExecute;
+
+        if (_normalBtn != null)
+            _normalBtn.interactable = canExecute;
+
+        if (_fastBtn != null)
+            _fastBtn.interactable = canExecute;
+    }
+
     private void SelectAndStartWork(TaskVariant variant)
     {
         if (_currentTask == null) return;
         if (_taskRunner == null) return;
         if (_team == null) return;
-        if (_team.GetTaskStatus(_currentTask) != TaskStatus.NOT_STARTED) return;
+        if (!_team.CanExecuteTask(_currentTask)) return;
 
         _selectedVariant = variant;
 

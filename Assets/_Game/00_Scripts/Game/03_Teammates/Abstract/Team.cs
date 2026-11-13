@@ -139,6 +139,7 @@ public class Team : MonoBehaviour
     {
         if (task == null) return;
         _runtimeTaskStatus[task] = status;
+        OnTasksChanged?.Invoke();
     }
 
     /// <summary>Returns dependency tasks that are not yet COMPLETED (blocking this task).</summary>
