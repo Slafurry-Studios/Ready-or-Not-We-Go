@@ -57,7 +57,7 @@ public class Team : MonoBehaviour
         return _gainedInformation.ContainsKey(informationId);
     }
 
-    public void GrantInformation(Information info)
+    public void GrantInformation(Information info, Memory memoryDefinition = null)
     {
         if (info == null || string.IsNullOrEmpty(info.InformationId)) return;
         if (!_gainedInformation.ContainsKey(info.InformationId))
@@ -65,31 +65,37 @@ public class Team : MonoBehaviour
 
         Debug.Log($"[Team] {name} gained information: {info.InformationId}");
 
-        // Also add to memory bank so MemoryContainerUI can display it
+        // Add to memory bank with MaxSize check
         if (_memoryBank != null)
         {
-            var memories = _memoryBank.memories ?? new Memory[0];
-
-            bool alreadyExists = false;
-            foreach (var m in memories)
+            var memDef = memoryDefinition ?? new Memory
             {
-                if (m != null && m.information == info)
-                {
-                    alreadyExists = true;
-                    break;
-                }
-            }
+                information = info,
+                MemoryName = info.InformationName,
+                DecayRate = 0.1f,
+                RecallTime = 5f,
+                MemorySize = 1f
+            };
 
-            if (!alreadyExists)
+            var memory = new Memory
             {
-                var newMemories = new Memory[memories.Length + 1];
-                for (int i = 0; i < memories.Length; i++)
-                    newMemories[i] = memories[i];
-                newMemories[memories.Length] = new Memory { information = info };
-                _memoryBank.memories = newMemories;
-            }
+                MemoryName = memDef.MemoryName,
+                DecayRate = memDef.DecayRate,
+                RecallTime = memDef.RecallTime,
+                MemorySize = memDef.MemorySize,
+                information = info
+            };
 
-            Debug.Log($"[Team] {name} memory bank now has {_memoryBank.memories.Length} memories");
+            if (!_memoryBank.AddMemory(memory))
+            {
+                // Memory bank maxed out - remove from gained info so actions stay blocked
+                _gainedInformation.Remove(info.InformationId);
+                Debug.LogWarning($"[Team] {name}: memory bank maxed, cannot add {info.InformationId}");
+            }
+            else
+            {
+                Debug.Log($"[Team] {name} memory bank now has {_memoryBank.memories.Length} memories");
+            }
         }
         else
         {
@@ -248,13 +254,40 @@ public class Team : MonoBehaviour
             foreach (var mem in action.InformationGotten)
             {
                 if (mem != null && mem.information != null)
-                    GrantInformation(mem.information);
+                    GrantInformation(mem.information, mem);
             }
         }
 
         _completedActions[action] = true;
 
         OnAvailableActionsChanged?.Invoke();
+    }
+
+    public void RemoveInformation(string informationId)
+    {
+        if (string.IsNullOrEmpty(informationId)) return;
+
+        if (_gainedInformation.ContainsKey(informationId))
+        {
+            var info = _gainedInformation[informationId];
+            _gainedInformation.Remove(informationId);
+
+            // Remove from memory bank
+            if (_memoryBank != null && _memoryBank.memories != null)
+            {
+                Memory toRemove = null;
+                foreach (var m in _memoryBank.memories)
+                {
+                    if (m != null && m.information == info)
+                    {
+                        toRemove = m;
+                        break;
+                    }
+                }
+                if (toRemove != null)
+                    _memoryBank.RemoveMemory(toRemove);
+            }
+        }
     }
 
     public float GetActionProgress(Action action)

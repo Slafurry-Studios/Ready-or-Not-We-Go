@@ -7,6 +7,7 @@ public class MemoryUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI memoryNameText;
     [SerializeField] private Slider slider;
     [SerializeField] private Button recallButton;
+    [SerializeField] private Button forgetButton;
 
     private MemoryStatus _memoryStatus;
 
@@ -17,6 +18,11 @@ public class MemoryUI : MonoBehaviour
             recallButton.onClick.AddListener(HandleRecallClicked);
         }
 
+        if (forgetButton != null)
+        {
+            forgetButton.onClick.AddListener(HandleForgetClicked);
+        }
+
         Subscribe();
     }
 
@@ -25,6 +31,11 @@ public class MemoryUI : MonoBehaviour
         if (recallButton != null)
         {
             recallButton.onClick.RemoveListener(HandleRecallClicked);
+        }
+
+        if (forgetButton != null)
+        {
+            forgetButton.onClick.RemoveListener(HandleForgetClicked);
         }
 
         Unsubscribe();
@@ -72,6 +83,14 @@ public class MemoryUI : MonoBehaviour
         if (_memoryStatus != null)
         {
             _memoryStatus.Recall();
+        }
+    }
+
+    private void HandleForgetClicked()
+    {
+        if (_memoryStatus != null)
+        {
+            _memoryStatus.Forget();
         }
     }
 }
