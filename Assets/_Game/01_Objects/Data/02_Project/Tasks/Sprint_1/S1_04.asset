@@ -16,7 +16,13 @@ MonoBehaviour:
   _taskName: Art style guide & palette
   _energyNeeded: 10
   _timeNeeded: 90
-  _roleForTask: 3
+  _roleForTask: 2
+  _slowEnergyMultiplier: 0.8
+  _slowTimeMultiplier: 1.5
+  _normalEnergyMultiplier: 1
+  _normalTimeMultiplier: 1
+  _fastEnergyMultiplier: 1.5
+  _fastTimeMultiplier: 0.7
   _unexpectedInterval: 0.8
   _projectProgress: 1.5
   _dependsBy:

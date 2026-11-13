@@ -13,10 +13,16 @@ MonoBehaviour:
   m_Name: S1_06
   m_EditorClassIdentifier: Assembly-CSharp::Task
   _taskId: S1-06
-  _taskName: Game concept & RPG pillars
+  _taskName: Sprint planning & scope lock
   _energyNeeded: 0
   _timeNeeded: 30
   _roleForTask: 4
+  _slowEnergyMultiplier: 0.8
+  _slowTimeMultiplier: 1.5
+  _normalEnergyMultiplier: 1
+  _normalTimeMultiplier: 1
+  _fastEnergyMultiplier: 1.5
+  _fastTimeMultiplier: 0.7
   _unexpectedInterval: 0.5
   _projectProgress: 1.5
   _dependsBy:

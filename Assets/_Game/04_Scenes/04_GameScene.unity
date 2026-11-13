@@ -2353,12 +2353,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1531831587}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9, type: 3}
+  m_Script: {fileID: 11500000, guid: f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MemberAI
+  m_EditorClassIdentifier: Assembly-CSharp::FounderAI
   _team: {fileID: 2043844998}
-  _taskRunner: {fileID: 375266258}
-  _decisionChance: 0.5
+  _suspicionIncreasePerTick: 5
+  _searchInterval: 10
 --- !u!114 &522734796127404318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3165,6 +3165,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 703219144}
     m_Modifications:
+    - target: {fileID: 188233103447055567, guid: c45087bd5dcd32b379f4687d80d342d2,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -101.999954
+      objectReference: {fileID: 0}
+    - target: {fileID: 188233103447055567, guid: c45087bd5dcd32b379f4687d80d342d2,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8.900045
+      objectReference: {fileID: 0}
     - target: {fileID: 236836603558849177, guid: c45087bd5dcd32b379f4687d80d342d2,
         type: 3}
       propertyPath: m_IsActive
@@ -3294,6 +3304,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4275853009720275709, guid: c45087bd5dcd32b379f4687d80d342d2,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -102
+      objectReference: {fileID: 0}
+    - target: {fileID: 4275853009720275709, guid: c45087bd5dcd32b379f4687d80d342d2,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 5097060700519830596, guid: c45087bd5dcd32b379f4687d80d342d2,
         type: 3}
