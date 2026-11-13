@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Recognize Old Palette Trick
   _duration: 0
   _energyUsed: 0
-  _suspicionGenerated: 6
   _requiredInformation:
   - {fileID: 11400000, guid: 2d10bc0c2a8e46c8bd5ce546a45e3a19, type: 2}
   MinimumDay: 0

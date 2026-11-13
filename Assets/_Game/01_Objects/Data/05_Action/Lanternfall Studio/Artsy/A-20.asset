@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Rest (Deep Sleep)
   _duration: 240
   _energyUsed: -100
-  _suspicionGenerated: 0
   _requiredInformation: []
   _statusModifiers: []
   _informationGotten: []

@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Browse Palette Codes
   _duration: 45
   _energyUsed: 4
-  _suspicionGenerated: 2
   _requiredInformation: []
   MinimumDay: 2
   _informationGotten:

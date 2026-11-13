@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Browse Emoji Meanings
   _duration: 45
   _energyUsed: 4
-  _suspicionGenerated: 1.5
   _requiredInformation: []
   MinimumDay: 2
   _informationGotten:

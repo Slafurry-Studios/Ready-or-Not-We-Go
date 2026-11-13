@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Post with Palette Trick
   _duration: 60
   _energyUsed: 6
-  _suspicionGenerated: 4
   _requiredInformation:
   - {fileID: 11400000, guid: 21563b721b9a44dfb8ff3e43a8ff9a58, type: 2}
   MinimumDay: 0

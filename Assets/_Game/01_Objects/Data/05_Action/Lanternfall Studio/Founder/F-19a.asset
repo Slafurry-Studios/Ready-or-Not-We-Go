@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Recognize Old Alt-text Trick
   _duration: 0
   _energyUsed: 0
-  _suspicionGenerated: 6
   _requiredInformation:
   - {fileID: 11400000, guid: 590f2d54c1334218bfe5157a4589cd84, type: 2}
   MinimumDay: 0

@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Compile Location Notebook
   _duration: 30
   _energyUsed: 2
-  _suspicionGenerated: 0
   _requiredInformation: []
   MinimumDay: 0
   _informationGotten:

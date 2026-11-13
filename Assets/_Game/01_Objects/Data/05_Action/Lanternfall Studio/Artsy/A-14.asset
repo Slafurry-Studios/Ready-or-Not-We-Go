@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Outsider Report Attempt
   _duration: 60
   _energyUsed: 6
-  _suspicionGenerated: 8
   _requiredInformation:
   - {fileID: 11400000, guid: 6ba0881cf0f8446abf4b615b092a3a44, type: 2}
   - {fileID: 11400000, guid: 79145bb53d23475ebd3eb91a3905cbba, type: 2}

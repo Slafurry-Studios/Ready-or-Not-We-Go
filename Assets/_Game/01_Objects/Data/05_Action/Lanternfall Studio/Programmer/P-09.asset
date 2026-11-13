@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Offer Code Help
   _duration: 20
   _energyUsed: 0
-  _suspicionGenerated: 0
   _requiredInformation: []
   _statusModifiers: []
   _informationGotten: []

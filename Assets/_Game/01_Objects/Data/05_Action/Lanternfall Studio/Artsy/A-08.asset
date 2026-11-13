@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Browse Emergency Directory
   _duration: 60
   _energyUsed: 5
-  _suspicionGenerated: 6
   _requiredInformation: []
   MinimumDay: 3
   _informationGotten:

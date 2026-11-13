@@ -51,9 +51,7 @@ MonoBehaviour:
   _teamRole: 1
   _teamCondition: 0
   _energyStatus: {fileID: 8047033869506216057}
-  _suspicionStatus: {fileID: 4252147042673074074}
   _tasks: []
-  _teamFamiliarities: []
   _actionCollection:
   - {fileID: 11400000, guid: af07c9a899204de796b2437be0f0afbb, type: 2}
   - {fileID: 11400000, guid: 160a35187305429b8267008d634143e9, type: 2}
@@ -82,18 +80,4 @@ MonoBehaviour:
   _timeCounter: {fileID: 0}
   _energyConsumptionRate: 1
   _energyRecoveryRate: 0.5
---- !u!114 &4252147042673074074
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6310008014850152510}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e06b2932fffb28b3a6830ee71816496, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SuspicionStatus
-  _startingValue: 100
-  _maxValue: 100
-  _minimumValue: 0
+

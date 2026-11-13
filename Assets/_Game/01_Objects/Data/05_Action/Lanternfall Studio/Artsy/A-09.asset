@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Browse Local Professionals
   _duration: 60
   _energyUsed: 5
-  _suspicionGenerated: 3
   _requiredInformation: []
   MinimumDay: 3
   _informationGotten:

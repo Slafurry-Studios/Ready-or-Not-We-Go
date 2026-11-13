@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Sleep-talk in Other Voices
   _duration: 60
   _energyUsed: 0
-  _suspicionGenerated: 0
   _requiredInformation:
   - {fileID: 11400000, guid: 0e5b30a8e5d446f7b976b201ad284ee6, type: 2}
   MinimumDay: 0

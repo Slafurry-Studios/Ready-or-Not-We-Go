@@ -10,7 +10,6 @@ public class Action : ScriptableObject
     [Header("Action Settings")]
     [SerializeField] private float _duration;
     [SerializeField] private float _energyUsed;
-    [SerializeField] private float _suspicionGenerated;
 
     [Header("Action Requirements")]
     [SerializeField] private Information[] _requiredInformation;
@@ -25,7 +24,6 @@ public class Action : ScriptableObject
     public string ActionName => _actionName;
     public float Duration => _duration;
     public float EnergyUsed => _energyUsed;
-    public float SuspicionGenerated => _suspicionGenerated;
     public Information[] RequiredInformation => _requiredInformation;
     public int MinimumDayRequirement => MinimumDay;
     public Memory[] InformationGotten => _informationGotten;

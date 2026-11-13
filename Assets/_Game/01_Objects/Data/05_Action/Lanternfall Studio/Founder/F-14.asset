@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Reject Social Post
   _duration: 30
   _energyUsed: 0
-  _suspicionGenerated: 2
   _requiredInformation: []
   _statusModifiers: []
   _informationGotten: []

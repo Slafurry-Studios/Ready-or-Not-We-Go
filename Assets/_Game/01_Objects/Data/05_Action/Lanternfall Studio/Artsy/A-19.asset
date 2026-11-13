@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Rest (Light Sleep)
   _duration: 60
   _energyUsed: -25
-  _suspicionGenerated: 0
   _requiredInformation: []
   _statusModifiers: []
   _informationGotten: []

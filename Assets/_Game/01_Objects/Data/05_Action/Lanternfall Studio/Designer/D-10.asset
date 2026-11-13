@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Mention Local Time
   _duration: 10
   _energyUsed: 0
-  _suspicionGenerated: 0
   _requiredInformation:
   - {fileID: 11400000, guid: 985d2521458b49d9833d55fef0a2b62a, type: 2}
   - {fileID: 11400000, guid: 5e5c2db9ca414c84b07b32eacbfb81ee, type: 2}

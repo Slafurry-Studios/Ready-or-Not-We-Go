@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Search Old Files
   _duration: 60
   _energyUsed: 4
-  _suspicionGenerated: 3
   _requiredInformation: []
   MinimumDay: 0
   _informationGotten:

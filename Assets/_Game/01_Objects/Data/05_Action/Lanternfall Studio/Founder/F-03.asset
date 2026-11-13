@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Exaggerate Deadline
   _duration: 0
   _energyUsed: 0
-  _suspicionGenerated: 0
   _requiredInformation:
   - {fileID: 11400000, guid: 012d2bb7ea8749e6a1c6dda1e8148045, type: 2}
   MinimumDay: 0

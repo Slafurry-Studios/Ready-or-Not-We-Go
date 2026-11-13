@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Post with Alt-text Trick
   _duration: 60
   _energyUsed: 6
-  _suspicionGenerated: 4
   _requiredInformation:
   - {fileID: 11400000, guid: c1ec3de8a9574ca79bb65b32136d426c, type: 2}
   MinimumDay: 0
