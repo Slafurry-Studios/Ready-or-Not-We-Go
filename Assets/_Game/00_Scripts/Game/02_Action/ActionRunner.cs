@@ -59,12 +59,21 @@ public class ActionRunner : MonoBehaviour
 
     private void CompleteAction(Action action, Team team)
     {
+        Debug.Log($"[ActionRunner] completing action: {action.ActionName} on team {team.name}, energyUsed={action.EnergyUsed}");
+
         // Apply action execution (status modifiers, etc.)
         action.ActionExecution?.ExecuteAction(team);
 
         // Deduct energy from artsy's energy status
         if (_artsyEnergy != null)
+        {
             _artsyEnergy.AddValue(-action.EnergyUsed);
+            Debug.Log($"[ActionRunner] energy drained by {action.EnergyUsed}, remaining={_artsyEnergy.CurrentValue}");
+        }
+        else
+        {
+            Debug.LogWarning($"[ActionRunner] _artsyEnergy is null — energy won't drain. Assign EnergyStatus on ActionRunner.");
+        }
 
         // Grant information / memories
         if (action.InformationGotten != null)
@@ -80,5 +89,6 @@ public class ActionRunner : MonoBehaviour
         _activeActions.Remove(action);
 
         OnActionCompleted?.Invoke(action);
+        Debug.Log($"[ActionRunner] action {action.ActionName} completed");
     }
 }

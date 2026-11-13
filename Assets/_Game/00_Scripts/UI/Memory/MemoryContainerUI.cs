@@ -12,11 +12,13 @@ public class MemoryContainerUI : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log($"[MemoryContainerUI] Start, team={_team?.name}");
         RefreshUI();
     }
 
     public void SetTeam(Team team)
     {
+        Debug.Log($"[MemoryContainerUI] SetTeam to {team?.name}");
         if (_team != null)
             _team.OnInformationGained -= OnInformationGained;
 
@@ -30,6 +32,7 @@ public class MemoryContainerUI : MonoBehaviour
 
     private void OnInformationGained(Information info)
     {
+        Debug.Log($"[MemoryContainerUI] received OnInformationGained for {info.InformationId}, team={_team?.name}");
         RefreshUI();
     }
 

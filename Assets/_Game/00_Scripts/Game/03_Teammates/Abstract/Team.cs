@@ -63,6 +63,8 @@ public class Team : MonoBehaviour
         if (!_gainedInformation.ContainsKey(info.InformationId))
             _gainedInformation[info.InformationId] = info;
 
+        Debug.Log($"[Team] {name} gained information: {info.InformationId}");
+
         // Also add to memory bank so MemoryContainerUI can display it
         if (_memoryBank != null)
         {
@@ -86,9 +88,16 @@ public class Team : MonoBehaviour
                 newMemories[memories.Length] = new Memory { information = info };
                 _memoryBank.memories = newMemories;
             }
+
+            Debug.Log($"[Team] {name} memory bank now has {_memoryBank.memories.Length} memories");
+        }
+        else
+        {
+            Debug.LogWarning($"[Team] {name}: _memoryBank is null — memory won't show in UI. Assign MemoryBank on this Team.");
         }
 
         OnInformationGained?.Invoke(info);
+        Debug.Log($"[Team] {name} fired OnInformationGained for {info.InformationId}");
     }
 
     public Action[] ActionCollection => _actionCollection;
@@ -208,15 +217,19 @@ public class Team : MonoBehaviour
         if (action == null) return;
         if (!CanExecuteAction(action)) return;
 
+        Debug.Log($"[Team] {name} executing action: {action.ActionName}, duration={action.Duration}, energyUsed={action.EnergyUsed}");
+
         // Delegate to ActionRunner (persistent, owns the coroutine - same pattern as TaskRunner)
         var actionRunner = FindFirstObjectByType<ActionRunner>();
         if (actionRunner != null)
         {
+            Debug.Log($"[Team] {name}: delegating to ActionRunner");
             actionRunner.StartAction(action, this);
             return;
         }
 
         // Fallback: instant completion if no ActionRunner in scene
+        Debug.Log($"[Team] {name}: no ActionRunner in scene, completing instantly");
         CompleteAction(action);
     }
 
