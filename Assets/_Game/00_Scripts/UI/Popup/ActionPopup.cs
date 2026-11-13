@@ -11,13 +11,19 @@ public class ActionPopup : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _descTxt;
 
     [Header("Execution")]
-    [SerializeField] private Team _team;
     [SerializeField] private Button _executeBtn;
 
     private Action _currentAction;
+    private Team _team;
 
     private void Awake()
     {
+        if (_executeBtn == null)
+        {
+            // Auto-find execute button on this popup so no manual assignment needed
+            _executeBtn = GetComponentInChildren<Button>(true);
+        }
+
         if (_executeBtn != null)
         {
             _executeBtn.onClick.RemoveAllListeners();
@@ -25,11 +31,12 @@ public class ActionPopup : MonoBehaviour
         }
     }
 
-    public void SetText(Action action)
+    public void SetText(Action action, Team team)
     {
         if (action == null) return;
 
         _currentAction = action;
+        _team = team;
         _titleTxt.text = action.ActionName;
 
         StringBuilder description = new StringBuilder();

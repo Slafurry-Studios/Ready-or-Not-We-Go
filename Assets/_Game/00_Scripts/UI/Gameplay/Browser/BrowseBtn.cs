@@ -74,7 +74,7 @@ public class BrowseBtn : MonoBehaviour
         if (_action == null || _actionPopup == null || _team == null) return;
         if (!_team.CanExecuteAction(_action)) return;
 
-        _actionPopup.SetText(_action);
+        _actionPopup.SetText(_action, _team);
         _actionPopup.gameObject.SetActive(true);
     }
 
