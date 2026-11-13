@@ -348,6 +348,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BrowseBtn
   _label: {fileID: 5887656828321775564}
+  _progressSlider: {fileID: 7701224821021695667}
 --- !u!1 &7449658439322370404
 GameObject:
   m_ObjectHideFlags: 0
