@@ -52,10 +52,23 @@ public class MemoryContainerUI : MonoBehaviour
         RefreshUI();
     }
 
+    private void OnMemoryForgotten(Memory memory)
+    {
+        Debug.Log($"[MemoryContainerUI] memory forgotten: {memory.information?.InformationId}");
+        if (_team != null)
+        {
+            _team.RemoveInformation(memory.information.InformationId);
+            _team.MemoryBank?.RemoveMemory(memory);
+        }
+        RefreshUI();
+    }
+
     private void OnDestroy()
     {
         if (_team != null)
+        {
             _team.OnInformationGained -= OnInformationGained;
+        }
     }
 
     public void RefreshUI()
@@ -78,6 +91,7 @@ public class MemoryContainerUI : MonoBehaviour
             if (status != null)
             {
                 status.Initialize(memories[i]);
+                status.OnMemoryForgotten += OnMemoryForgotten;
                 item.SetMemoryStatus(status);
             }
 
@@ -91,6 +105,9 @@ public class MemoryContainerUI : MonoBehaviour
         {
             if (_spawnedItems[i] != null)
             {
+                var status = _spawnedItems[i].GetComponent<MemoryStatus>();
+                if (status != null)
+                    status.OnMemoryForgotten -= OnMemoryForgotten;
                 Destroy(_spawnedItems[i].gameObject);
             }
         }
