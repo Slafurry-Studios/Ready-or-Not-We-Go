@@ -20,6 +20,16 @@ public class Team : MonoBehaviour
     [SerializeField] private Action[] _actionCollection;
     [SerializeField] private Action[] _availableActions;
 
+    private void Awake()
+    {
+        // Auto-resolve references so no manual Inspector assignment is required
+        if (_energyStatus == null)
+            _energyStatus = GetComponent<EnergyStatus>();
+
+        if (_timeCounter == null)
+            _timeCounter = FindObjectOfType<TimeCounter>();
+    }
+
     public event System.Action OnTasksChanged;
     public event System.Action OnAvailableActionsChanged;
     public event System.Action<TeamCondition> OnConditionChanged;
