@@ -22,16 +22,16 @@ public class Team : MonoBehaviour
 
     private void Awake()
     {
-        // Auto-resolve references so no manual Inspector assignment is required
+        // Auto-resolve EnergyStatus from same GameObject only (no FindObjectOfType - wrong with multiple teams)
         if (_energyStatus == null)
-        {
             _energyStatus = GetComponent<EnergyStatus>();
-            if (_energyStatus == null)
-                _energyStatus = FindObjectOfType<EnergyStatus>();
-        }
 
+        // TimeCounter is a single scene system - FindObjectOfType is safe here
         if (_timeCounter == null)
             _timeCounter = FindObjectOfType<TimeCounter>();
+
+        if (_energyStatus == null)
+            Debug.LogWarning($"[Team] {name}: _energyStatus is null. Put EnergyStatus on same GameObject as Team, or assign in Inspector.");
     }
 
     public event System.Action OnTasksChanged;
