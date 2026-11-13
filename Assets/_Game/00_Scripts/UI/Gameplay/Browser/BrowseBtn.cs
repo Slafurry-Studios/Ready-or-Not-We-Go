@@ -69,6 +69,17 @@ public class BrowseBtn : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        if (_button == null)
+            _button = GetComponent<Button>();
+
+        if (_progressSlider != null)
+            _progressSlider.maxValue = 100f;
+
+        RefreshSlider();
+    }
+
     private void OnClick()
     {
         if (_action == null || _actionPopup == null || _team == null) return;
