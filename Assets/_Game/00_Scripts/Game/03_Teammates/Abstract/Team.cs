@@ -23,6 +23,7 @@ public class Team : MonoBehaviour
     public event System.Action OnTasksChanged;
     public event System.Action OnAvailableActionsChanged;
     public event System.Action<TeamCondition> OnConditionChanged;
+    public event System.Action<Information> OnInformationGained;
 
     private readonly Dictionary<Task, TaskStatus> _runtimeTaskStatus = new();
     private readonly Dictionary<string, Information> _gainedInformation = new();
@@ -47,6 +48,33 @@ public class Team : MonoBehaviour
         if (info == null || string.IsNullOrEmpty(info.InformationId)) return;
         if (!_gainedInformation.ContainsKey(info.InformationId))
             _gainedInformation[info.InformationId] = info;
+
+        // Also add to memory bank so MemoryContainerUI can display it
+        if (_memoryBank != null)
+        {
+            var memories = _memoryBank.memories ?? new Memory[0];
+
+            bool alreadyExists = false;
+            foreach (var m in memories)
+            {
+                if (m != null && m.information == info)
+                {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+
+            if (!alreadyExists)
+            {
+                var newMemories = new Memory[memories.Length + 1];
+                for (int i = 0; i < memories.Length; i++)
+                    newMemories[i] = memories[i];
+                newMemories[memories.Length] = new Memory { information = info };
+                _memoryBank.memories = newMemories;
+            }
+        }
+
+        OnInformationGained?.Invoke(info);
     }
 
     public Action[] ActionCollection => _actionCollection;

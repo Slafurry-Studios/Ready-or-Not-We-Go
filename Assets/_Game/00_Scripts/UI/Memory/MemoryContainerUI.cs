@@ -17,8 +17,26 @@ public class MemoryContainerUI : MonoBehaviour
 
     public void SetTeam(Team team)
     {
+        if (_team != null)
+            _team.OnInformationGained -= OnInformationGained;
+
         _team = team;
+
+        if (_team != null)
+            _team.OnInformationGained += OnInformationGained;
+
         RefreshUI();
+    }
+
+    private void OnInformationGained(Information info)
+    {
+        RefreshUI();
+    }
+
+    private void OnDestroy()
+    {
+        if (_team != null)
+            _team.OnInformationGained -= OnInformationGained;
     }
 
     public void RefreshUI()
