@@ -9,6 +9,7 @@ public class WorkBtn : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _label;
     [SerializeField] private Slider _progressSlider;
+    [SerializeField] private DependencyPopup _dependencyPopup;
     private Task _task;
     private TaskPopup _taskPopup;
     private Team _team;
@@ -17,11 +18,12 @@ public class WorkBtn : MonoBehaviour
     private Coroutine _punchCoroutine;
     private Vector3 _originalScale;
 
-    public void Initialize(Task task, TaskPopup taskPopup, Team team)
+    public void Initialize(Task task, TaskPopup taskPopup, Team team, DependencyPopup dependencyPopup)
     {
         _task = task;
         _taskPopup = taskPopup;
         _team = team;
+        _dependencyPopup = dependencyPopup;
         _label.text = _task.TaskName;
 
         _button = GetComponent<Button>();
@@ -44,6 +46,8 @@ public class WorkBtn : MonoBehaviour
 
         var status = _team.GetTaskStatus(_task);
         bool anyInProgress = _team.IsAnyTaskInProgress();
+        // Keep button clickable when blocked so DependencyPopup can show blockers.
+        // Only disable interactability when task is not NOT_STARTED or another task is in progress.
         _button.interactable = status == TaskStatus.NOT_STARTED && !anyInProgress;
 
         if (status == TaskStatus.IN_PROGRESS)
@@ -94,6 +98,7 @@ public class WorkBtn : MonoBehaviour
     {
         if (_button == null || _team == null || _task == null) return;
 
+        // Keep clickable when blocked so DependencyPopup can show blockers.
         bool canInteract = _team.GetTaskStatus(_task) == TaskStatus.NOT_STARTED
             && !_team.IsAnyTaskInProgress();
 
@@ -104,6 +109,15 @@ public class WorkBtn : MonoBehaviour
     {
         if (_task == null || _taskPopup == null || _team == null) return;
         if (_team.GetTaskStatus(_task) != TaskStatus.NOT_STARTED) return;
+
+        // Check task dependencies before allowing execution
+        var blocked = _team.GetBlockedDependencies(_task);
+        if (blocked.Length > 0)
+        {
+            if (_dependencyPopup != null)
+                _dependencyPopup.Show(_task, blocked);
+            return;
+        }
 
         _taskPopup.SetText(_task);
         _taskPopup.gameObject.SetActive(true);

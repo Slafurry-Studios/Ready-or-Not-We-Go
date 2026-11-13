@@ -36,23 +36,17 @@ public class BrowseBtn : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log($"[BrowseBtn] Update running: button={_button != null}, team={_team != null}, action={_action != null}, gameObject.active={gameObject.activeInHierarchy}, enabled={enabled}");
-
         if (_button == null || _team == null || _action == null) return;
         RefreshInteractable();
     }
 
     private void RefreshInteractable()
     {
-        Debug.Log($"[BrowseBtn] RefreshInteractable: team={_team != null}, action={_action != null}, button={_button != null}");
-
         if (_team == null || _action == null) return;
 
         bool executing = _team.IsActionExecuting(_action);
         bool completed = _team.GetActionCompleted(_action);
         bool canStart = !executing && !completed && _team.CanExecuteAction(_action);
-
-        Debug.Log($"[BrowseBtn] executing={executing}, completed={completed}, canStart={canStart}");
 
         _button.interactable = canStart;
 
@@ -73,7 +67,6 @@ public class BrowseBtn : MonoBehaviour
         if (_team.IsActionExecuting(_action))
         {
             float progress = _team.GetActionProgress(_action);
-            Debug.Log($"[BrowseBtn] slider: executing, progress={progress}, value={progress * 100f}");
             _progressSlider.value = progress * 100f;
         }
         else if (_team.GetActionCompleted(_action))
