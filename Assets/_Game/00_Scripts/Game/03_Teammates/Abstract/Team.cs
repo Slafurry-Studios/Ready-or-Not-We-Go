@@ -12,6 +12,7 @@ public class Team : MonoBehaviour
     [Header("Status")]
     [SerializeField] private TeamCondition _teamCondition;
     [SerializeField] private EnergyStatus _energyStatus;
+    [SerializeField] private TimeCounter _timeCounter;
     [SerializeField] private Task[] _tasks;
     [SerializeField] private MemoryBank _memoryBank;
 
@@ -19,11 +20,27 @@ public class Team : MonoBehaviour
     [SerializeField] private Action[] _actionCollection;
     [SerializeField] private Action[] _availableActions;
 
+    private void Awake()
+    {
+        // Auto-resolve EnergyStatus from same GameObject only (no FindObjectOfType - wrong with multiple teams)
+        if (_energyStatus == null)
+            _energyStatus = GetComponent<EnergyStatus>();
+
+        // TimeCounter is a single scene system - FindFirstObjectByType is safe here
+        if (_timeCounter == null)
+            _timeCounter = FindFirstObjectByType<TimeCounter>();
+
+        if (_energyStatus == null)
+            Debug.LogWarning($"[Team] {name}: _energyStatus is null. Put EnergyStatus on same GameObject as Team, or assign in Inspector.");
+    }
+
     public event System.Action OnTasksChanged;
     public event System.Action OnAvailableActionsChanged;
     public event System.Action<TeamCondition> OnConditionChanged;
+    public event System.Action<Information> OnInformationGained;
 
     private readonly Dictionary<Task, TaskStatus> _runtimeTaskStatus = new();
+    private readonly Dictionary<string, Information> _gainedInformation = new();
 
     public string ID => _id;
     public string Name => _name;
@@ -33,6 +50,55 @@ public class Team : MonoBehaviour
     public EnergyStatus Energy => _energyStatus;
     public Task[] Tasks => _tasks;
     public MemoryBank MemoryBank => _memoryBank;
+
+    public bool HasInformation(string informationId)
+    {
+        if (string.IsNullOrEmpty(informationId)) return false;
+        return _gainedInformation.ContainsKey(informationId);
+    }
+
+    public void GrantInformation(Information info)
+    {
+        if (info == null || string.IsNullOrEmpty(info.InformationId)) return;
+        if (!_gainedInformation.ContainsKey(info.InformationId))
+            _gainedInformation[info.InformationId] = info;
+
+        Debug.Log($"[Team] {name} gained information: {info.InformationId}");
+
+        // Also add to memory bank so MemoryContainerUI can display it
+        if (_memoryBank != null)
+        {
+            var memories = _memoryBank.memories ?? new Memory[0];
+
+            bool alreadyExists = false;
+            foreach (var m in memories)
+            {
+                if (m != null && m.information == info)
+                {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+
+            if (!alreadyExists)
+            {
+                var newMemories = new Memory[memories.Length + 1];
+                for (int i = 0; i < memories.Length; i++)
+                    newMemories[i] = memories[i];
+                newMemories[memories.Length] = new Memory { information = info };
+                _memoryBank.memories = newMemories;
+            }
+
+            Debug.Log($"[Team] {name} memory bank now has {_memoryBank.memories.Length} memories");
+        }
+        else
+        {
+            Debug.LogWarning($"[Team] {name}: _memoryBank is null — memory won't show in UI. Assign MemoryBank on this Team.");
+        }
+
+        OnInformationGained?.Invoke(info);
+        Debug.Log($"[Team] {name} fired OnInformationGained for {info.InformationId}");
+    }
 
     public Action[] ActionCollection => _actionCollection;
     public Action[] AvailableActions => _availableActions;
@@ -70,6 +136,8 @@ public class Team : MonoBehaviour
     }
 
     private readonly Dictionary<Task, float> _taskProgress = new();
+    private readonly Dictionary<Action, bool> _completedActions = new();
+    private readonly Dictionary<Action, float> _actionProgress = new();
 
     public float GetTaskProgress(Task task)
     {
@@ -95,6 +163,120 @@ public class Team : MonoBehaviour
                 return true;
         }
 
+        return false;
+    }
+
+    public bool GetActionCompleted(Action action)
+    {
+        if (action == null) return false;
+        if (_completedActions.TryGetValue(action, out var completed))
+            return completed;
+        return false;
+    }
+
+    public void SetActionCompleted(Action action, bool completed)
+    {
+        if (action == null) return;
+        _completedActions[action] = completed;
+    }
+
+    public bool CanExecuteAction(Action action)
+    {
+        if (action == null) return false;
+
+        // Already executing
+        var actionRunner = FindFirstObjectByType<ActionRunner>();
+        if (actionRunner != null && actionRunner.IsActionExecuting(action)) return false;
+
+        // Already completed
+        if (_completedActions.ContainsKey(action)) return false;
+
+        // Energy check
+        if (_energyStatus != null && _energyStatus.CurrentValue < action.EnergyUsed)
+            return false;
+
+        // Minimum day check
+        if (_timeCounter != null && _timeCounter.CurrentDay < action.MinimumDayRequirement)
+            return false;
+
+        // Required information check
+        if (action.RequiredInformation != null)
+        {
+            foreach (var req in action.RequiredInformation)
+            {
+                if (req != null && !HasInformation(req.InformationId))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void ExecuteAction(Action action)
+    {
+        if (action == null) return;
+        if (!CanExecuteAction(action)) return;
+
+        Debug.Log($"[Team] {name} executing action: {action.ActionName}, duration={action.Duration}, energyUsed={action.EnergyUsed}");
+
+        // Delegate to ActionRunner (persistent, owns the coroutine - same pattern as TaskRunner)
+        var actionRunner = FindFirstObjectByType<ActionRunner>();
+        if (actionRunner != null)
+        {
+            Debug.Log($"[Team] {name}: delegating to ActionRunner");
+            actionRunner.StartAction(action, this);
+            return;
+        }
+
+        // Fallback: instant completion if no ActionRunner in scene
+        Debug.Log($"[Team] {name}: no ActionRunner in scene, completing instantly");
+        CompleteAction(action);
+    }
+
+    private void CompleteAction(Action action)
+    {
+        // Apply action execution (status modifiers, etc.)
+        action.ActionExecution?.ExecuteAction(this);
+
+        // Deduct energy
+        if (_energyStatus != null)
+            _energyStatus.AddValue(-action.EnergyUsed);
+
+        // Grant information / memories
+        if (action.InformationGotten != null)
+        {
+            foreach (var mem in action.InformationGotten)
+            {
+                if (mem != null && mem.information != null)
+                    GrantInformation(mem.information);
+            }
+        }
+
+        _completedActions[action] = true;
+
+        OnAvailableActionsChanged?.Invoke();
+    }
+
+    public float GetActionProgress(Action action)
+    {
+        if (action == null) return 0f;
+        if (_actionProgress.TryGetValue(action, out var progress))
+            return progress;
+        return 0f;
+    }
+
+    public void SetActionProgress(Action action, float progress)
+    {
+        if (action == null) return;
+        _actionProgress[action] = Mathf.Clamp01(progress);
+    }
+
+    public bool IsActionExecuting(Action action)
+    {
+        if (action == null) return false;
+        var actionRunner = FindFirstObjectByType<ActionRunner>();
+        if (actionRunner != null)
+            return actionRunner.IsActionExecuting(action);
         return false;
     }
 }

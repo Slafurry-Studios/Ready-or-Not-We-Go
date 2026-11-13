@@ -12,13 +12,50 @@ public class MemoryContainerUI : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log($"[MemoryContainerUI] Start, team={_team?.name}");
         RefreshUI();
+    }
+
+    private void OnEnable()
+    {
+        if (_team != null)
+        {
+            _team.OnInformationGained -= OnInformationGained;
+            _team.OnInformationGained += OnInformationGained;
+            RefreshUI();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (_team != null)
+            _team.OnInformationGained -= OnInformationGained;
     }
 
     public void SetTeam(Team team)
     {
+        Debug.Log($"[MemoryContainerUI] SetTeam to {team?.name}");
+        if (_team != null)
+            _team.OnInformationGained -= OnInformationGained;
+
         _team = team;
+
+        if (_team != null)
+            _team.OnInformationGained += OnInformationGained;
+
         RefreshUI();
+    }
+
+    private void OnInformationGained(Information info)
+    {
+        Debug.Log($"[MemoryContainerUI] received OnInformationGained for {info.InformationId}, team={_team?.name}");
+        RefreshUI();
+    }
+
+    private void OnDestroy()
+    {
+        if (_team != null)
+            _team.OnInformationGained -= OnInformationGained;
     }
 
     public void RefreshUI()
