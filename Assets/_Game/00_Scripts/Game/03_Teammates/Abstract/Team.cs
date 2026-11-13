@@ -24,7 +24,11 @@ public class Team : MonoBehaviour
     {
         // Auto-resolve references so no manual Inspector assignment is required
         if (_energyStatus == null)
+        {
             _energyStatus = GetComponent<EnergyStatus>();
+            if (_energyStatus == null)
+                _energyStatus = FindObjectOfType<EnergyStatus>();
+        }
 
         if (_timeCounter == null)
             _timeCounter = FindObjectOfType<TimeCounter>();
