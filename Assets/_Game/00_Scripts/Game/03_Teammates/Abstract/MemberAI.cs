@@ -8,7 +8,7 @@ public class MemberAI : MonoBehaviour, ITimedUpdate
     [SerializeField] private TaskRunner _taskRunner;
 
     [Header("AI Settings")]
-    [SerializeField] private float _decisionChance = 0.5f; // chance to act each tick
+    [SerializeField] private float _decisionChance = 0.5f;
 
     private bool _registered;
 
@@ -39,12 +39,12 @@ public class MemberAI : MonoBehaviour, ITimedUpdate
     public void TimedUpdate()
     {
         if (_team == null || _taskRunner == null) return;
+        if (_team.TeamRole == TeamRole.FOUNDER) return;
+
         if (_team.IsAnyTaskInProgress()) return;
 
-        // Random chance so NPCs don't act every single tick
         if (Random.value > _decisionChance) return;
 
-        // Try to start a task first
         foreach (var task in _team.Tasks)
         {
             if (task == null) continue;
@@ -56,7 +56,6 @@ public class MemberAI : MonoBehaviour, ITimedUpdate
             }
         }
 
-        // Try to execute an available action
         foreach (var action in _team.AvailableActions)
         {
             if (action == null) continue;

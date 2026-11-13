@@ -36,6 +36,7 @@ public class ForceExecutePopup : MonoBehaviour
         foreach (var team in allTeams)
         {
             if (team == null || team == _playerTeam) continue;
+            if (team.TeamRole == TeamRole.FOUNDER) continue;
             if (team.Tasks == null) continue;
 
             foreach (var task in team.Tasks)
