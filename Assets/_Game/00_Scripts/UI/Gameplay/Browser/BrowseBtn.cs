@@ -57,7 +57,9 @@ public class BrowseBtn : MonoBehaviour
 
         if (_team.IsActionExecuting(_action))
         {
-            _progressSlider.value = _team.GetActionProgress(_action) * 100f;
+            float progress = _team.GetActionProgress(_action);
+            Debug.Log($"[BrowseBtn] slider: executing, progress={progress}, value={progress * 100f}");
+            _progressSlider.value = progress * 100f;
         }
         else if (_team.GetActionCompleted(_action))
         {
