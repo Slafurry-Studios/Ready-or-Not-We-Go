@@ -46,8 +46,9 @@ public class WorkBtn : MonoBehaviour
 
         var status = _team.GetTaskStatus(_task);
         bool anyInProgress = _team.IsAnyTaskInProgress();
-        bool depsMet = _team.CanExecuteTask(_task);
-        _button.interactable = status == TaskStatus.NOT_STARTED && !anyInProgress && depsMet;
+        // Keep button clickable when blocked so DependencyPopup can show blockers.
+        // Only disable interactability when task is not NOT_STARTED or another task is in progress.
+        _button.interactable = status == TaskStatus.NOT_STARTED && !anyInProgress;
 
         if (status == TaskStatus.IN_PROGRESS)
         {
@@ -97,7 +98,8 @@ public class WorkBtn : MonoBehaviour
     {
         if (_button == null || _team == null || _task == null) return;
 
-        bool canInteract = _team.CanExecuteTask(_task)
+        // Keep clickable when blocked so DependencyPopup can show blockers.
+        bool canInteract = _team.GetTaskStatus(_task) == TaskStatus.NOT_STARTED
             && !_team.IsAnyTaskInProgress();
 
         _button.interactable = canInteract;
