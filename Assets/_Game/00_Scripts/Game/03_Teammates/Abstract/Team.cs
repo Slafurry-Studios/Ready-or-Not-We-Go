@@ -85,6 +85,7 @@ public class Team : MonoBehaviour
     }
 
     private readonly Dictionary<Task, float> _taskProgress = new();
+    private readonly Dictionary<Action, bool> _completedActions = new();
 
     public float GetTaskProgress(Task task)
     {
@@ -111,6 +112,20 @@ public class Team : MonoBehaviour
         }
 
         return false;
+    }
+
+    public bool GetActionCompleted(Action action)
+    {
+        if (action == null) return false;
+        if (_completedActions.TryGetValue(action, out var completed))
+            return completed;
+        return false;
+    }
+
+    public void SetActionCompleted(Action action, bool completed)
+    {
+        if (action == null) return;
+        _completedActions[action] = completed;
     }
 
     public bool CanExecuteAction(Action action)

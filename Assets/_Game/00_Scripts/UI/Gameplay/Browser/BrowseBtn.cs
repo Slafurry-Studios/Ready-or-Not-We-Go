@@ -6,6 +6,7 @@ using TMPro;
 public class BrowseBtn : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _label;
+    [SerializeField] private Slider _progressSlider;
     private Action _action;
     private ActionPopup _actionPopup;
     private Team _team;
@@ -24,6 +25,12 @@ public class BrowseBtn : MonoBehaviour
         _button.onClick.RemoveListener(OnClick);
         _button.onClick.AddListener(OnClick);
 
+        if (_progressSlider != null)
+        {
+            _progressSlider.maxValue = 100f;
+            RefreshSlider();
+        }
+
         RefreshInteractable();
     }
 
@@ -37,6 +44,16 @@ public class BrowseBtn : MonoBehaviour
     {
         bool canInteract = _team.CanExecuteAction(_action);
         _button.interactable = canInteract;
+
+        RefreshSlider();
+    }
+
+    private void RefreshSlider()
+    {
+        if (_progressSlider == null) return;
+
+        bool completed = _team != null && _team.GetActionCompleted(_action);
+        _progressSlider.value = completed ? 100f : 0f;
     }
 
     private void OnClick()
