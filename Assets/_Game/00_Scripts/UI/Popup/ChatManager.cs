@@ -41,7 +41,7 @@ public class ChatManager : MonoBehaviour
     private void OnTaskCompleted(Task task, Team team)
     {
         if (task == null || team == null) return;
-        AddLine(team.name, $"finished {task.TaskName}.");
+        AddLine(team.Name, $"finished {task.TaskName}.");
     }
 
     private void OnInformationGained(Information info)
@@ -51,7 +51,7 @@ public class ChatManager : MonoBehaviour
         {
             if (team.HasInformation(info.InformationId))
             {
-                AddLine(team.name, $"learned {info.InformationName}.");
+                AddLine(team.Name, $"learned {info.InformationName}.");
                 break;
             }
         }
