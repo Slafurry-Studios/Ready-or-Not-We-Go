@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Post with Acrostic Trick
   _duration: 60
   _energyUsed: 6
-  _suspicionGenerated: 4
   _requiredInformation:
   - {fileID: 11400000, guid: 5bc61bae21b74601ae1b57f8aeb9540d, type: 2}
   MinimumDay: 0

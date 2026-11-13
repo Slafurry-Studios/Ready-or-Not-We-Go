@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Chat Reply Friendly
   _duration: 15
   _energyUsed: 1
-  _suspicionGenerated: 0
   _requiredInformation: []
   _statusModifiers: []
   _informationGotten: []

@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Recognize Old Emoji Trick
   _duration: 0
   _energyUsed: 0
-  _suspicionGenerated: 6
   _requiredInformation:
   - {fileID: 11400000, guid: 7d4d4a84357a4a2bbead24eaba7c00f6, type: 2}
   MinimumDay: 0

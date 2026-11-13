@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Share Docs Snippet
   _duration: 15
   _energyUsed: 0
-  _suspicionGenerated: 0
   _requiredInformation:
   - {fileID: 11400000, guid: 985d2521458b49d9833d55fef0a2b62a, type: 2}
   MinimumDay: 0

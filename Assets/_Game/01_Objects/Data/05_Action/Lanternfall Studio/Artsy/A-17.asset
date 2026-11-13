@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Read Founder Notes
   _duration: 15
   _energyUsed: 1
-  _suspicionGenerated: 0
   _requiredInformation: []
   MinimumDay: 0
   _informationGotten:

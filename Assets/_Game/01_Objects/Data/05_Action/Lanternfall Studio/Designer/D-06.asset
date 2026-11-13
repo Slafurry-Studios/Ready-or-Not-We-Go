@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Downplay Artsy’s Work
   _duration: 10
   _energyUsed: 0
-  _suspicionGenerated: -1
   _requiredInformation: []
   _statusModifiers: []
   _informationGotten: []

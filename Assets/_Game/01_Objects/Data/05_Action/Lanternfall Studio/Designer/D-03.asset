@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Give Mentor Advice
   _duration: 15
   _energyUsed: 0
-  _suspicionGenerated: 0
   _requiredInformation:
   - {fileID: 11400000, guid: 819593b174a946bda1aef554aefd5537, type: 2}
   MinimumDay: 0

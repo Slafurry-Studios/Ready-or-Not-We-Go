@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Browse Sun Times
   _duration: 30
   _energyUsed: 3
-  _suspicionGenerated: 1
   _requiredInformation: []
   MinimumDay: 2
   _informationGotten:

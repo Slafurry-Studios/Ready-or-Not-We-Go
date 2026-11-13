@@ -20,9 +20,6 @@ public class ActionPopup : MonoBehaviour
         if (action.EnergyUsed != 0)
             description.AppendLine($"Uses {action.EnergyUsed} energy.");
 
-        if (action.SuspicionGenerated != 0)
-            description.AppendLine($"Generates {action.SuspicionGenerated} suspicion.");
-
         _descTxt.text = description.ToString().TrimEnd();
     }
 }

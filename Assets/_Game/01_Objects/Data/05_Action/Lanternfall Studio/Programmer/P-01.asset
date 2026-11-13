@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Send Hidden Clue
   _duration: 20
   _energyUsed: 0
-  _suspicionGenerated: 0
   _requiredInformation:
   - {fileID: 11400000, guid: 929ff3e82f9c454f914686220848713a, type: 2}
   MinimumDay: 0

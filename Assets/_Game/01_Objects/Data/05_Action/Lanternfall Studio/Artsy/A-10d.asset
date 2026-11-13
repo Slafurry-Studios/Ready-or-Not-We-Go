@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Post with Emoji Trick
   _duration: 60
   _energyUsed: 6
-  _suspicionGenerated: 4
   _requiredInformation:
   - {fileID: 11400000, guid: 8af0be3d10344fec9ee9c5f03e9f7263, type: 2}
   MinimumDay: 0

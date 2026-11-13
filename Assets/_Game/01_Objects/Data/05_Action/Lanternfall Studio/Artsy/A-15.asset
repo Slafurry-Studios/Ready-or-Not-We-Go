@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Ask Teammate Surroundings
   _duration: 20
   _energyUsed: 1
-  _suspicionGenerated: 1
   _requiredInformation: []
   MinimumDay: 0
   _informationGotten:

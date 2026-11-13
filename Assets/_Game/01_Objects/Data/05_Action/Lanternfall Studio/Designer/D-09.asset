@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Report to Founder
   _duration: 10
   _energyUsed: 0
-  _suspicionGenerated: 3
   _requiredInformation: []
   _statusModifiers: []
   _informationGotten: []

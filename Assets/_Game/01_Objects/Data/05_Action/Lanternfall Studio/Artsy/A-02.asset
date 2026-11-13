@@ -16,7 +16,6 @@ MonoBehaviour:
   _actionName: Browse Art Reference
   _duration: 30
   _energyUsed: 3
-  _suspicionGenerated: -0.5
   _requiredInformation: []
   MinimumDay: 2
   _statusModifiers: []
