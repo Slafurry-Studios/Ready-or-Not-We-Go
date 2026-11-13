@@ -3446,6 +3446,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ExecuteActionPopup
       objectReference: {fileID: 0}
+    - target: {fileID: 6364370951323701486, guid: 7cbcac771ea450cb086b36c07d3b77c5,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8972057395489457774, guid: 7cbcac771ea450cb086b36c07d3b77c5,
         type: 3}
       propertyPath: m_Pivot.x

@@ -207,7 +207,7 @@ public class Team : MonoBehaviour
         _activeActionCoroutines[action] = coroutine;
     }
 
-    private IEnumerator ExecuteActionRoutine(Action action)
+    private System.Collections.IEnumerator ExecuteActionRoutine(Action action)
     {
         float elapsed = 0f;
         float duration = action.Duration;
