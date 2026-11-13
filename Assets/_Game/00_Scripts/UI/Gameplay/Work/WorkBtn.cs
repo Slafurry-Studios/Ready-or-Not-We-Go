@@ -18,11 +18,12 @@ public class WorkBtn : MonoBehaviour
     private Coroutine _punchCoroutine;
     private Vector3 _originalScale;
 
-    public void Initialize(Task task, TaskPopup taskPopup, Team team)
+    public void Initialize(Task task, TaskPopup taskPopup, Team team, DependencyPopup dependencyPopup)
     {
         _task = task;
         _taskPopup = taskPopup;
         _team = team;
+        _dependencyPopup = dependencyPopup;
         _label.text = _task.TaskName;
 
         _button = GetComponent<Button>();

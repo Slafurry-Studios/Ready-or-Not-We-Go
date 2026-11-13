@@ -9,6 +9,7 @@ public class ButtonGenerator : MonoBehaviour
     [SerializeField] private GameObject _workBtnPrefab;
     [SerializeField] private Transform _workContent;
     [SerializeField] private TaskPopup _taskPopup;
+    [SerializeField] private DependencyPopup _dependencyPopup;
 
     [Header("Browse Buttons")]
     [SerializeField] private GameObject _browseBtnPrefab;
@@ -48,7 +49,7 @@ public class ButtonGenerator : MonoBehaviour
             GameObject obj = Instantiate(_workBtnPrefab, _workContent);
 
             WorkBtn button = obj.GetComponent<WorkBtn>();
-            button.Initialize(task, _taskPopup, _team);
+            button.Initialize(task, _taskPopup, _team, _dependencyPopup);
         }
     }
 

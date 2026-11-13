@@ -64,22 +64,35 @@ public class TaskRunner : MonoBehaviour
         team.SetTasks(active.ToArray());
     }
 
+    /// <summary>Returns all teams (standard + player) that can receive tasks.</summary>
+    public Team[] GetAllTeams()
+    {
+        var all = new System.Collections.Generic.List<Team>();
+        if (_teams != null)
+            all.AddRange(_teams);
+        if (_playerTeam != null)
+            all.Add(_playerTeam);
+        return all.ToArray();
+    }
+
     /// <summary>Called by TaskPopup when player clicks a variant button. Runs on this persistent object so the timer survives popup deactivation.</summary>
     public event System.Action<Task> OnTaskCompleted;
 
-    public bool StartTask(Task task, TaskVariant variant, Team team)
+    public bool StartTask(Task task, TaskVariant variant, Team team, EnergyStatus energySource = null)
     {
         if (task == null) return false;
         if (_activeTasks.ContainsKey(task)) return false;
         if (team == null) return false;
         if (!team.CanExecuteTask(task)) return false;
-        if (_artsyEnergy == null) return false;
+
+        var energy = energySource ?? _artsyEnergy;
+        if (energy == null) return false;
 
         float cost = task.GetEnergyNeeded(variant);
-        if (_artsyEnergy.CurrentValue < cost) return false;
+        if (energy.CurrentValue < cost) return false;
 
         team.SetTaskStatus(task, TaskStatus.IN_PROGRESS);
-        _artsyEnergy.AddValue(-cost);
+        energy.AddValue(-cost);
 
         var coroutine = StartCoroutine(WorkRoutine(task, variant, team));
         _activeTasks[task] = coroutine;
