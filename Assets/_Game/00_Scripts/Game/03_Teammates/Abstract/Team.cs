@@ -129,7 +129,6 @@ public class Team : MonoBehaviour
     private readonly Dictionary<Task, float> _taskProgress = new();
     private readonly Dictionary<Action, bool> _completedActions = new();
     private readonly Dictionary<Action, float> _actionProgress = new();
-    private readonly Dictionary<Action, Coroutine> _activeActionCoroutines = new();
 
     public float GetTaskProgress(Task task)
     {
@@ -208,32 +207,15 @@ public class Team : MonoBehaviour
         if (action == null) return;
         if (!CanExecuteAction(action)) return;
 
-        // Instant actions (duration <= 0) complete immediately
-        if (action.Duration <= 0f)
+        // Delegate to ActionRunner (persistent, owns the coroutine - same pattern as TaskRunner)
+        var actionRunner = FindObjectOfType<ActionRunner>();
+        if (actionRunner != null)
         {
-            CompleteAction(action);
+            actionRunner.StartAction(action, this);
             return;
         }
 
-        // Timed actions run a coroutine so the slider can slide
-        _actionProgress[action] = 0f;
-        var coroutine = StartCoroutine(ExecuteActionRoutine(action));
-        _activeActionCoroutines[action] = coroutine;
-    }
-
-    private System.Collections.IEnumerator ExecuteActionRoutine(Action action)
-    {
-        float elapsed = 0f;
-        float duration = action.Duration;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            _actionProgress[action] = Mathf.Clamp01(elapsed / duration);
-            yield return null;
-        }
-
-        _actionProgress[action] = 1f;
+        // Fallback: instant completion if no ActionRunner in scene
         CompleteAction(action);
     }
 
@@ -257,7 +239,6 @@ public class Team : MonoBehaviour
         }
 
         _completedActions[action] = true;
-        _activeActionCoroutines.Remove(action);
 
         OnAvailableActionsChanged?.Invoke();
     }
@@ -270,9 +251,18 @@ public class Team : MonoBehaviour
         return 0f;
     }
 
+    public void SetActionProgress(Action action, float progress)
+    {
+        if (action == null) return;
+        _actionProgress[action] = Mathf.Clamp01(progress);
+    }
+
     public bool IsActionExecuting(Action action)
     {
         if (action == null) return false;
-        return _activeActionCoroutines.ContainsKey(action);
+        var actionRunner = FindObjectOfType<ActionRunner>();
+        if (actionRunner != null)
+            return actionRunner.IsActionExecuting(action);
+        return false;
     }
 }
