@@ -16,7 +16,7 @@ public class ForceEntry : MonoBehaviour
         _task = task;
         _team = team;
         _taskRunner = taskRunner;
-        _text.text = $"Force {team.name} to do {task.TaskName}";
+        _text.text = $"Force {team.Name} to do {task.TaskName}";
 
         _button.onClick.RemoveAllListeners();
         _button.onClick.AddListener(OnForce);
@@ -24,6 +24,6 @@ public class ForceEntry : MonoBehaviour
 
     private void OnForce()
     {
-        _taskRunner.StartTask(_task, TaskVariant.Fast, _team, _team.Energy);
+        _taskRunner.StartTask(_task, TaskVariant.Fast, _team, _team.Energy, true);
     }
 }

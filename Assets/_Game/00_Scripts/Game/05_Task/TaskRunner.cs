@@ -78,7 +78,10 @@ public class TaskRunner : MonoBehaviour
     /// <summary>Called by TaskPopup when player clicks a variant button. Runs on this persistent object so the timer survives popup deactivation.</summary>
     public event System.Action<Task, Team> OnTaskCompleted;
 
-    public bool StartTask(Task task, TaskVariant variant, Team team, EnergyStatus energySource = null)
+    /// <summary>Called when a task starts. Passes Task + Team + isForced.</summary>
+    public event System.Action<Task, Team, bool> OnTaskStarted;
+
+    public bool StartTask(Task task, TaskVariant variant, Team team, EnergyStatus energySource = null, bool isForced = false)
     {
         if (task == null) return false;
         if (_activeTasks.ContainsKey(task)) return false;
@@ -96,6 +99,8 @@ public class TaskRunner : MonoBehaviour
 
         var coroutine = StartCoroutine(WorkRoutine(task, variant, team));
         _activeTasks[task] = coroutine;
+
+        OnTaskStarted?.Invoke(task, team, isForced);
         return true;
     }
 

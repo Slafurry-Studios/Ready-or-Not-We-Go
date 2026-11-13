@@ -19,7 +19,10 @@ public class ChatManager : MonoBehaviour
     {
         _taskRunner = FindFirstObjectByType<TaskRunner>();
         if (_taskRunner != null)
+        {
             _taskRunner.OnTaskCompleted += OnTaskCompleted;
+            _taskRunner.OnTaskStarted += OnTaskStarted;
+        }
 
         foreach (var team in FindObjectsByType<Team>(FindObjectsSortMode.None))
         {
@@ -30,7 +33,10 @@ public class ChatManager : MonoBehaviour
     private void OnDisable()
     {
         if (_taskRunner != null)
+        {
             _taskRunner.OnTaskCompleted -= OnTaskCompleted;
+            _taskRunner.OnTaskStarted -= OnTaskStarted;
+        }
 
         foreach (var team in FindObjectsByType<Team>(FindObjectsSortMode.None))
         {
@@ -42,6 +48,15 @@ public class ChatManager : MonoBehaviour
     {
         if (task == null || team == null) return;
         AddLine(team.Name, $"finished {task.TaskName}.");
+    }
+
+    private void OnTaskStarted(Task task, Team team, bool isForced)
+    {
+        if (task == null || team == null) return;
+        if (isForced)
+            AddLine(team.Name, $"was forced to work on {task.TaskName}.");
+        else
+            AddLine(team.Name, $"started working on {task.TaskName}.");
     }
 
     private void OnInformationGained(Information info)
