@@ -15,6 +15,10 @@ public class TaskPopup : MonoBehaviour
     [SerializeField] private Button _normalBtn;
     [SerializeField] private Button _fastBtn;
 
+    [Header("Execution")]
+    [SerializeField] private TaskRunner _taskRunner;
+    [SerializeField] private Team _team;
+
     private Task _currentTask;
     private TaskVariant _selectedVariant;
 
@@ -23,14 +27,17 @@ public class TaskPopup : MonoBehaviour
 
     private void Awake()
     {
+        _slowBtn.onClick.RemoveAllListeners();
         _slowBtn.onClick.AddListener(
-            () => SelectVariant(TaskVariant.Slow));
+            () => SelectAndStartWork(TaskVariant.Slow));
 
+        _normalBtn.onClick.RemoveAllListeners();
         _normalBtn.onClick.AddListener(
-            () => SelectVariant(TaskVariant.Normal));
+            () => SelectAndStartWork(TaskVariant.Normal));
 
+        _fastBtn.onClick.RemoveAllListeners();
         _fastBtn.onClick.AddListener(
-            () => SelectVariant(TaskVariant.Fast));
+            () => SelectAndStartWork(TaskVariant.Fast));
     }
 
     public void SetText(Task task)
@@ -76,6 +83,21 @@ public class TaskPopup : MonoBehaviour
         if (_currentTask == null) return;
 
         _selectedVariant = variant;
+    }
+
+    private void SelectAndStartWork(TaskVariant variant)
+    {
+        if (_currentTask == null) return;
+        if (_taskRunner == null) return;
+        if (_team == null) return;
+        if (_team.GetTaskStatus(_currentTask) != TaskStatus.NOT_STARTED) return;
+
+        _selectedVariant = variant;
+
+        if (_taskRunner.StartTask(_currentTask, variant, _team))
+        {
+            ClosePopup();
+        }
     }
 
     public void ClosePopup()

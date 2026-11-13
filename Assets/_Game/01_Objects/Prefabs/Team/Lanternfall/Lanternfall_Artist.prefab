@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2127701253918726638}
   - component: {fileID: 4190506902420798739}
   - component: {fileID: 8047033869506216057}
-  - component: {fileID: 4252147042673074074}
   m_Layer: 0
   m_Name: Lanternfall_Artist
   m_TagString: Untagged
@@ -51,9 +50,10 @@ MonoBehaviour:
   _teamRole: 2
   _teamCondition: 0
   _energyStatus: {fileID: 8047033869506216057}
-  _tasks:
-  - {fileID: 11400000, guid: 953fd0e4a2cec4743855e1b223f01697, type: 2}
-  - {fileID: 11400000, guid: 2ffb65abb81264208ae6923cfa0e9466, type: 2}
+  _tasks: []
+  _memoryBank:
+    memories: []
+    MaxSize: 0
   _actionCollection:
   - {fileID: 11400000, guid: 6a2d6a19b5c64a7a9c0e51a6d624a075, type: 2}
   - {fileID: 11400000, guid: 014db1d08be449b8a72c3cb6634c1d01, type: 2}
@@ -103,4 +103,3 @@ MonoBehaviour:
   _timeCounter: {fileID: 0}
   _energyConsumptionRate: 0.2
   _energyRecoveryRate: 0.5
-

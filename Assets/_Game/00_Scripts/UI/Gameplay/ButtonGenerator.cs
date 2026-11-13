@@ -48,7 +48,7 @@ public class ButtonGenerator : MonoBehaviour
             GameObject obj = Instantiate(_workBtnPrefab, _workContent);
 
             WorkBtn button = obj.GetComponent<WorkBtn>();
-            button.Initialize(task, _taskPopup);
+            button.Initialize(task, _taskPopup, _team);
         }
     }
 

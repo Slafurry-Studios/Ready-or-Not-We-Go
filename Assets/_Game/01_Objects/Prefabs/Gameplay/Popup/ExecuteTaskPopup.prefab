@@ -229,6 +229,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TaskPopup
   _titleTxt: {fileID: 8033850235361995662}
   _descTxt: {fileID: 3591705615619878701}
+  _slowBtn: {fileID: 7599524769070594389}
+  _normalBtn: {fileID: 2131563583611880780}
+  _fastBtn: {fileID: 3556268991370797487}
+  _artsyEnergy: {fileID: 0}
+  _projectStatus: {fileID: 0}
+  _timeCounter: {fileID: 0}
+  _team: {fileID: 0}
 --- !u!1 &1899133961818895335
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,19 +632,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8818824162226475599}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1490027861399237281}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &4996785256946790713
 GameObject:
   m_ObjectHideFlags: 0
@@ -1402,19 +1397,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 107097503986977214}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1490027861399237281}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &9110925222588439113
 GameObject:
   m_ObjectHideFlags: 0
@@ -1535,16 +1518,4 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1287909724625653197}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1490027861399237281}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
