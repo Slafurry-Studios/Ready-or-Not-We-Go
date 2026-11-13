@@ -78,7 +78,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9271b20398dd9db908718c40f59225ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnergyStatus
+  _startingValue: 100
+  _maxValue: 100
+  _minimumValue: 0
+  _timeCounter: {fileID: 0}
   _energyConsumptionRate: 1
+  _energyRecoveryRate: 0.5
 --- !u!114 &4252147042673074074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91,3 +96,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e06b2932fffb28b3a6830ee71816496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SuspicionStatus
+  _startingValue: 100
+  _maxValue: 100
+  _minimumValue: 0

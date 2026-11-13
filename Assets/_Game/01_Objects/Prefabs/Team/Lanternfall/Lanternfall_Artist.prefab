@@ -52,7 +52,9 @@ MonoBehaviour:
   _teamCondition: 0
   _energyStatus: {fileID: 8047033869506216057}
   _suspicionStatus: {fileID: 4252147042673074074}
-  _tasks: []
+  _tasks:
+  - {fileID: 11400000, guid: 953fd0e4a2cec4743855e1b223f01697, type: 2}
+  - {fileID: 11400000, guid: 2ffb65abb81264208ae6923cfa0e9466, type: 2}
   _teamFamiliarities: []
   _actionCollection:
   - {fileID: 11400000, guid: 6a2d6a19b5c64a7a9c0e51a6d624a075, type: 2}
@@ -82,7 +84,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 22b12a2dbe7845d99750e2be9f67f4e1, type: 2}
   - {fileID: 11400000, guid: dc35e0761ebb425d9d8c570d4e5cdc90, type: 2}
   - {fileID: 11400000, guid: ff8fd34fd38e4beeabc09d79015f9695, type: 2}
-  _availableActions: []
+  _availableActions:
+  - {fileID: 11400000, guid: 014db1d08be449b8a72c3cb6634c1d01, type: 2}
+  - {fileID: 11400000, guid: 6a2d6a19b5c64a7a9c0e51a6d624a075, type: 2}
 --- !u!114 &8047033869506216057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,7 +99,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9271b20398dd9db908718c40f59225ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnergyStatus
-  _energyConsumptionRate: 1
+  _startingValue: 100
+  _maxValue: 100
+  _minimumValue: 0
+  _timeCounter: {fileID: 0}
+  _energyConsumptionRate: 0.2
+  _energyRecoveryRate: 0.5
 --- !u!114 &4252147042673074074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,3 +117,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e06b2932fffb28b3a6830ee71816496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SuspicionStatus
+  _startingValue: 100
+  _maxValue: 100
+  _minimumValue: 0
