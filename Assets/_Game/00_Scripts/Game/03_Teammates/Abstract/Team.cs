@@ -12,6 +12,7 @@ public class Team : MonoBehaviour
     [Header("Status")]
     [SerializeField] private TeamCondition _teamCondition;
     [SerializeField] private EnergyStatus _energyStatus;
+    [SerializeField] private TimeCounter _timeCounter;
     [SerializeField] private Task[] _tasks;
     [SerializeField] private MemoryBank _memoryBank;
 
@@ -24,6 +25,7 @@ public class Team : MonoBehaviour
     public event System.Action<TeamCondition> OnConditionChanged;
 
     private readonly Dictionary<Task, TaskStatus> _runtimeTaskStatus = new();
+    private readonly Dictionary<string, Information> _gainedInformation = new();
 
     public string ID => _id;
     public string Name => _name;
@@ -33,6 +35,19 @@ public class Team : MonoBehaviour
     public EnergyStatus Energy => _energyStatus;
     public Task[] Tasks => _tasks;
     public MemoryBank MemoryBank => _memoryBank;
+
+    public bool HasInformation(string informationId)
+    {
+        if (string.IsNullOrEmpty(informationId)) return false;
+        return _gainedInformation.ContainsKey(informationId);
+    }
+
+    public void GrantInformation(Information info)
+    {
+        if (info == null || string.IsNullOrEmpty(info.InformationId)) return;
+        if (!_gainedInformation.ContainsKey(info.InformationId))
+            _gainedInformation[info.InformationId] = info;
+    }
 
     public Action[] ActionCollection => _actionCollection;
     public Action[] AvailableActions => _availableActions;
@@ -96,5 +111,55 @@ public class Team : MonoBehaviour
         }
 
         return false;
+    }
+
+    public bool CanExecuteAction(Action action)
+    {
+        if (action == null) return false;
+
+        // Energy check
+        if (_energyStatus != null && _energyStatus.CurrentValue < action.EnergyUsed)
+            return false;
+
+        // Minimum day check
+        if (_timeCounter != null && _timeCounter.CurrentDay < action.MinimumDayRequirement)
+            return false;
+
+        // Required information check
+        if (action.RequiredInformation != null)
+        {
+            foreach (var req in action.RequiredInformation)
+            {
+                if (req != null && !HasInformation(req.InformationId))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void ExecuteAction(Action action)
+    {
+        if (action == null) return;
+        if (!CanExecuteAction(action)) return;
+
+        // Apply action execution (status modifiers, etc.)
+        action.ActionExecution?.ExecuteAction(this);
+
+        // Deduct energy
+        if (_energyStatus != null)
+            _energyStatus.AddValue(-action.EnergyUsed);
+
+        // Grant information / memories
+        if (action.InformationGotten != null)
+        {
+            foreach (var mem in action.InformationGotten)
+            {
+                if (mem != null && mem.information != null)
+                    GrantInformation(mem.information);
+            }
+        }
+
+        OnAvailableActionsChanged?.Invoke();
     }
 }

@@ -65,7 +65,7 @@ public class ButtonGenerator : MonoBehaviour
             GameObject obj = Instantiate(_browseBtnPrefab, _browseContent);
 
             BrowseBtn button = obj.GetComponent<BrowseBtn>();
-            button.Initialize(action, _actionPopup);
+            button.Initialize(action, _actionPopup, _team);
         }
     }
 
