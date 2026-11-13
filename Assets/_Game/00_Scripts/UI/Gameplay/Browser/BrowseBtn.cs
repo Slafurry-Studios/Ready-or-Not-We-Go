@@ -53,6 +53,13 @@ public class BrowseBtn : MonoBehaviour
 
     private void RefreshSlider()
     {
+        if (_progressSlider == null)
+        {
+            _progressSlider = GetComponentInChildren<Slider>(true);
+            if (_progressSlider != null)
+                _progressSlider.maxValue = 100f;
+        }
+
         if (_progressSlider == null || _team == null || _action == null) return;
 
         if (_team.IsActionExecuting(_action))
