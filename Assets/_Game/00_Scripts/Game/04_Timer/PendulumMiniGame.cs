@@ -12,6 +12,8 @@ public class PendulumMiniGame : MonoBehaviour
     [SerializeField] private RectTransform _target;
     [SerializeField] private RectTransform _railing;
     [SerializeField] private SleepController _sleepController;
+    [SerializeField] private TimeCounter _timeCounter;
+    [SerializeField] private EnergyStatus _energyStatus;
 
     [Header("Movement")]
     [SerializeField] private float _baseSpeed = 300f;
@@ -258,14 +260,16 @@ public class PendulumMiniGame : MonoBehaviour
 
         _isPlaying = false;
 
-        // Hentikan tidur dan majukan waktu 8 jam.
+        // Actually advance game time by 8 hours so the player wakes up later.
+        _timeCounter.AdvanceTime(8f);
+
+        // A full night's rest restores energy to maximum.
+        if (_energyStatus != null)
+            _energyStatus.SetValue(_energyStatus.MaxValue);
+
         _sleepController.EndSleep();
 
-        // Waktu tetap dimajukan secara instan.
-        // Energy recovery selama 8 jam perlu dihitung terpisah
-        // jika AdvanceTime tidak menjalankan TimedUpdate.
         Debug.Log("Character slept for 8 hours!");
-
         _onSleepEightHours?.Invoke();
     }
 

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using Slafurry.Utils.UI;
 
 public class SleepController : MonoBehaviour
 {
@@ -7,11 +8,14 @@ public class SleepController : MonoBehaviour
     [SerializeField] private TimeCounter _timeCounter;
     [SerializeField] private EnergyStatus _energyStatus;
     [SerializeField] private PendulumMiniGame _miniGame;
+    [SerializeField] private UIFade _fadePanel;
 
     [Header("Sleep Settings")]
     [SerializeField] private float _normalSleepMultiplier = 4f;
     [SerializeField] private float _deepSleepMultiplier = 8f;
-    [SerializeField] private float _deepSleepWakeUpEnergy = 80f;
+    [SerializeField] private float _deepSleepWakeUpEnergy = 90f;
+    [SerializeField] private float _maxDeepSleepHours = 10f;
+    [SerializeField] private float _fadeDuration = 0.5f;
 
     [Header("Events")]
     [SerializeField] private UnityEvent _onWakeUp;
@@ -19,6 +23,7 @@ public class SleepController : MonoBehaviour
 
     private bool _isSleeping;
     private bool _isDeepSleeping;
+    private float _deepSleepStartTime;
 
     public bool IsSleeping => _isSleeping;
     public bool IsDeepSleeping => _isDeepSleeping;
@@ -62,9 +67,21 @@ public class SleepController : MonoBehaviour
 
         _isSleeping = true;
         _isDeepSleeping = true;
+        _deepSleepStartTime = _timeCounter.CurrentTime;
+
+        // Resolve the fade panel automatically if not assigned in the Inspector.
+        if (_fadePanel == null)
+            _fadePanel = FindFirstObjectByType<UIFade>();
 
         _energyStatus.SetSleeping(true);
         _timeCounter.SetTimeMultiplier(_deepSleepMultiplier);
+
+        // Fade in the black panel when deep sleep begins.
+        if (_fadePanel != null)
+        {
+            _fadePanel.SetImmediate(0f);
+            _fadePanel.FadeIn(_fadeDuration);
+        }
 
         Debug.Log("Character entered deep sleep!");
 
@@ -89,6 +106,10 @@ public class SleepController : MonoBehaviour
 
         Debug.Log("Character woke up!");
 
+        // Fade out the black panel after deep sleep ends.
+        if (wasDeepSleeping && _fadePanel != null)
+            _fadePanel.FadeOut(_fadeDuration);
+
         _onWakeUp?.Invoke();
 
         if (wasDeepSleeping)
@@ -100,15 +121,24 @@ public class SleepController : MonoBehaviour
         if (!_isSleeping)
             return;
 
-        // Deep sleep berakhir saat energy mencapai 80.
-        if (_isDeepSleeping &&
-            currentEnergy >= _deepSleepWakeUpEnergy)
+        // Deep sleep ends when energy reaches 90, or the maximum sleep
+        // duration (8-10 hours) has passed, whichever comes first.
+        if (_isDeepSleeping)
         {
-            EndSleep();
-            return;
+            float secondsPerHour = 60f * _timeCounter.MinuteToSecondRatio;
+            float elapsedHours = (_timeCounter.CurrentTime - _deepSleepStartTime) / secondsPerHour;
+
+            bool energyReached = currentEnergy >= _deepSleepWakeUpEnergy;
+            bool maxTimeReached = elapsedHours >= _maxDeepSleepHours;
+
+            if (energyReached || maxTimeReached)
+            {
+                EndSleep();
+                return;
+            }
         }
 
-        // Tidur normal otomatis berakhir saat energy penuh.
+        // Normal sleep automatically ends when energy is full.
         if (!_isDeepSleeping && currentEnergy >= maxEnergy)
         {
             EndSleep();
