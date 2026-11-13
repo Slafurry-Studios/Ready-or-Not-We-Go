@@ -72,7 +72,7 @@ public class TaskRunner : MonoBehaviour
         if (task == null) return false;
         if (_activeTasks.ContainsKey(task)) return false;
         if (team == null) return false;
-        if (team.GetTaskStatus(task) != TaskStatus.NOT_STARTED) return false;
+        if (!team.CanExecuteTask(task)) return false;
         if (_artsyEnergy == null) return false;
 
         float cost = task.GetEnergyNeeded(variant);

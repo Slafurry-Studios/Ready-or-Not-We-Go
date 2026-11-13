@@ -9,6 +9,7 @@ public class WorkBtn : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _label;
     [SerializeField] private Slider _progressSlider;
+    [SerializeField] private DependencyPopup _dependencyPopup;
     private Task _task;
     private TaskPopup _taskPopup;
     private Team _team;
@@ -104,6 +105,15 @@ public class WorkBtn : MonoBehaviour
     {
         if (_task == null || _taskPopup == null || _team == null) return;
         if (_team.GetTaskStatus(_task) != TaskStatus.NOT_STARTED) return;
+
+        // Check task dependencies before allowing execution
+        var blocked = _team.GetBlockedDependencies(_task);
+        if (blocked.Length > 0)
+        {
+            if (_dependencyPopup != null)
+                _dependencyPopup.Show(_task, blocked);
+            return;
+        }
 
         _taskPopup.SetText(_task);
         _taskPopup.gameObject.SetActive(true);

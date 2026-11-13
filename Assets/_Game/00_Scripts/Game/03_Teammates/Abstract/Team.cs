@@ -141,6 +141,34 @@ public class Team : MonoBehaviour
         _runtimeTaskStatus[task] = status;
     }
 
+    /// <summary>Returns dependency tasks that are not yet COMPLETED (blocking this task).</summary>
+    public Task[] GetBlockedDependencies(Task task)
+    {
+        if (task == null) return System.Array.Empty<Task>();
+        if (task.DependsBy == null) return System.Array.Empty<Task>();
+
+        var blocked = new System.Collections.Generic.List<Task>();
+        foreach (var dep in task.DependsBy)
+        {
+            if (dep == null) continue;
+            if (GetTaskStatus(dep) != TaskStatus.COMPLETED)
+                blocked.Add(dep);
+        }
+        return blocked.ToArray();
+    }
+
+    /// <summary>True if task is NOT_STARTED and all dependency tasks are COMPLETED.</summary>
+    public bool CanExecuteTask(Task task)
+    {
+        if (task == null) return false;
+        if (GetTaskStatus(task) != TaskStatus.NOT_STARTED) return false;
+
+        var blocked = GetBlockedDependencies(task);
+        if (blocked.Length > 0) return false;
+
+        return true;
+    }
+
     private readonly Dictionary<Task, float> _taskProgress = new();
     private readonly Dictionary<Action, bool> _completedActions = new();
     private readonly Dictionary<Action, float> _actionProgress = new();
