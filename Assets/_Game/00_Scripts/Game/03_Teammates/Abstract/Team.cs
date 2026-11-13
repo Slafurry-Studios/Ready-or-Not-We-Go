@@ -26,9 +26,9 @@ public class Team : MonoBehaviour
         if (_energyStatus == null)
             _energyStatus = GetComponent<EnergyStatus>();
 
-        // TimeCounter is a single scene system - FindObjectOfType is safe here
+        // TimeCounter is a single scene system - FindFirstObjectByType is safe here
         if (_timeCounter == null)
-            _timeCounter = FindObjectOfType<TimeCounter>();
+            _timeCounter = FindFirstObjectByType<TimeCounter>();
 
         if (_energyStatus == null)
             Debug.LogWarning($"[Team] {name}: _energyStatus is null. Put EnergyStatus on same GameObject as Team, or assign in Inspector.");
@@ -176,7 +176,8 @@ public class Team : MonoBehaviour
         if (action == null) return false;
 
         // Already executing
-        if (_activeActionCoroutines.ContainsKey(action)) return false;
+        var actionRunner = FindFirstObjectByType<ActionRunner>();
+        if (actionRunner != null && actionRunner.IsActionExecuting(action)) return false;
 
         // Already completed
         if (_completedActions.ContainsKey(action)) return false;
@@ -208,7 +209,7 @@ public class Team : MonoBehaviour
         if (!CanExecuteAction(action)) return;
 
         // Delegate to ActionRunner (persistent, owns the coroutine - same pattern as TaskRunner)
-        var actionRunner = FindObjectOfType<ActionRunner>();
+        var actionRunner = FindFirstObjectByType<ActionRunner>();
         if (actionRunner != null)
         {
             actionRunner.StartAction(action, this);
@@ -260,7 +261,7 @@ public class Team : MonoBehaviour
     public bool IsActionExecuting(Action action)
     {
         if (action == null) return false;
-        var actionRunner = FindObjectOfType<ActionRunner>();
+        var actionRunner = FindFirstObjectByType<ActionRunner>();
         if (actionRunner != null)
             return actionRunner.IsActionExecuting(action);
         return false;
