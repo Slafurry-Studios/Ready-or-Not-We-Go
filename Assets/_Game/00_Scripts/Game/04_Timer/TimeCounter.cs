@@ -21,6 +21,9 @@ public class TimeCounter : MonoBehaviour
     private float SecondsPerHour => 60f * _minuteToSecondRatio;
     private float SecondsPerDay => 24f * SecondsPerHour;
 
+    private float _timeMultiplier = 1f;
+
+
     void Awake()
     {
         _maxTime = _maxDay * SecondsPerDay;
@@ -31,7 +34,7 @@ public class TimeCounter : MonoBehaviour
     {
         if (_finished || IsPaused) return;
 
-        float delta = Time.deltaTime;
+        float delta = Time.deltaTime * _timeMultiplier;
         _currentTime += delta;
         _tickTimer += delta;
 
@@ -54,6 +57,21 @@ public class TimeCounter : MonoBehaviour
         {
             _timedUpdates[i].TimedUpdate();
         }
+    }
+    public void SetTimeMultiplier(float multiplier)
+    {
+        _timeMultiplier = Mathf.Max(0f, multiplier);
+    }
+
+    public void AdvanceTime(float hours)
+    {
+        _currentTime = Mathf.Min(
+            _currentTime + hours * SecondsPerHour,
+            _maxTime
+        );
+
+        if (_currentTime >= _maxTime)
+            _finished = true;
     }
 
     // ---------- Registration (call from OnEnable / OnDisable) ----------

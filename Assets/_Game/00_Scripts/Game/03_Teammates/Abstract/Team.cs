@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class Team : MonoBehaviour
 {
@@ -19,6 +20,10 @@ public class Team : MonoBehaviour
     [SerializeField] private Action[] _actionCollection;
     [SerializeField] private Action[] _availableActions;
 
+    public event System.Action OnTasksChanged;
+    public event System.Action OnAvailableActionsChanged;
+    public event System.Action<TeamCondition> OnConditionChanged;
+
     public string ID => _id;
     public string Name => _name;
     public TeamRole TeamRole => _teamRole;
@@ -32,5 +37,22 @@ public class Team : MonoBehaviour
 
     public Action[] ActionCollection => _actionCollection;
     public Action[] AvailableActions => _availableActions;
-}
 
+    public void SetTeamCondition(TeamCondition condition)
+    {
+        _teamCondition = condition;
+        OnConditionChanged?.Invoke(_teamCondition);
+    }
+
+    public void SetTasks(Task[] tasks)
+    {
+        _tasks = tasks;
+        OnTasksChanged?.Invoke();
+    }
+
+    public void SetAvailableActions(Action[] actions)
+    {
+        _availableActions = actions;
+        OnAvailableActionsChanged?.Invoke();
+    }
+}
