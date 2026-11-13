@@ -39,7 +39,7 @@ public class Team : MonoBehaviour
     public event System.Action<TeamCondition> OnConditionChanged;
     public event System.Action<Information> OnInformationGained;
 
-    private readonly Dictionary<Task, TaskStatus> _runtimeTaskStatus = new();
+    private static readonly Dictionary<Task, TaskStatus> _runtimeTaskStatus = new();
     private readonly Dictionary<string, Information> _gainedInformation = new();
 
     public string ID => _id;
