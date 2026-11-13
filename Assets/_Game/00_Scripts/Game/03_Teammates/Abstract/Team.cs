@@ -114,6 +114,8 @@ public class Team : MonoBehaviour
 
     private readonly Dictionary<Task, float> _taskProgress = new();
     private readonly Dictionary<Action, bool> _completedActions = new();
+    private readonly Dictionary<Action, float> _actionProgress = new();
+    private readonly Dictionary<Action, Coroutine> _activeActionCoroutines = new();
 
     public float GetTaskProgress(Task task)
     {
@@ -160,6 +162,12 @@ public class Team : MonoBehaviour
     {
         if (action == null) return false;
 
+        // Already executing
+        if (_activeActionCoroutines.ContainsKey(action)) return false;
+
+        // Already completed
+        if (_completedActions.ContainsKey(action)) return false;
+
         // Energy check
         if (_energyStatus != null && _energyStatus.CurrentValue < action.EnergyUsed)
             return false;
@@ -186,6 +194,37 @@ public class Team : MonoBehaviour
         if (action == null) return;
         if (!CanExecuteAction(action)) return;
 
+        // Instant actions (duration <= 0) complete immediately
+        if (action.Duration <= 0f)
+        {
+            CompleteAction(action);
+            return;
+        }
+
+        // Timed actions run a coroutine so the slider can slide
+        _actionProgress[action] = 0f;
+        var coroutine = StartCoroutine(ExecuteActionRoutine(action));
+        _activeActionCoroutines[action] = coroutine;
+    }
+
+    private IEnumerator ExecuteActionRoutine(Action action)
+    {
+        float elapsed = 0f;
+        float duration = action.Duration;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            _actionProgress[action] = Mathf.Clamp01(elapsed / duration);
+            yield return null;
+        }
+
+        _actionProgress[action] = 1f;
+        CompleteAction(action);
+    }
+
+    private void CompleteAction(Action action)
+    {
         // Apply action execution (status modifiers, etc.)
         action.ActionExecution?.ExecuteAction(this);
 
@@ -203,6 +242,23 @@ public class Team : MonoBehaviour
             }
         }
 
+        _completedActions[action] = true;
+        _activeActionCoroutines.Remove(action);
+
         OnAvailableActionsChanged?.Invoke();
+    }
+
+    public float GetActionProgress(Action action)
+    {
+        if (action == null) return 0f;
+        if (_actionProgress.TryGetValue(action, out var progress))
+            return progress;
+        return 0f;
+    }
+
+    public bool IsActionExecuting(Action action)
+    {
+        if (action == null) return false;
+        return _activeActionCoroutines.ContainsKey(action);
     }
 }

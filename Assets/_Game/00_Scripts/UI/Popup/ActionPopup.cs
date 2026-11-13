@@ -72,7 +72,6 @@ public class ActionPopup : MonoBehaviour
         if (_team == null) return;
 
         _team.ExecuteAction(_currentAction);
-        _team.SetActionCompleted(_currentAction, true);
         gameObject.SetActive(false);
     }
 }

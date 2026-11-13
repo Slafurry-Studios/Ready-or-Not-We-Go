@@ -42,18 +42,31 @@ public class BrowseBtn : MonoBehaviour
 
     private void RefreshInteractable()
     {
-        bool canInteract = _team.CanExecuteAction(_action);
-        _button.interactable = canInteract;
+        if (_team == null || _action == null) return;
 
-        RefreshSlider();
+        bool executing = _team.IsActionExecuting(_action);
+        bool completed = _team.GetActionCompleted(_action);
+        bool canStart = !executing && !completed && _team.CanExecuteAction(_action);
+
+        _button.interactable = canStart;
     }
 
     private void RefreshSlider()
     {
-        if (_progressSlider == null) return;
+        if (_progressSlider == null || _team == null || _action == null) return;
 
-        bool completed = _team != null && _team.GetActionCompleted(_action);
-        _progressSlider.value = completed ? 100f : 0f;
+        if (_team.IsActionExecuting(_action))
+        {
+            _progressSlider.value = _team.GetActionProgress(_action) * 100f;
+        }
+        else if (_team.GetActionCompleted(_action))
+        {
+            _progressSlider.value = 100f;
+        }
+        else
+        {
+            _progressSlider.value = 0f;
+        }
     }
 
     private void OnClick()
