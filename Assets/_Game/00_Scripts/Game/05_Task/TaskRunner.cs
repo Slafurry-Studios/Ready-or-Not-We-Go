@@ -76,7 +76,7 @@ public class TaskRunner : MonoBehaviour
     }
 
     /// <summary>Called by TaskPopup when player clicks a variant button. Runs on this persistent object so the timer survives popup deactivation.</summary>
-    public event System.Action<Task> OnTaskCompleted;
+    public event System.Action<Task, Team> OnTaskCompleted;
 
     public bool StartTask(Task task, TaskVariant variant, Team team, EnergyStatus energySource = null)
     {
@@ -119,6 +119,6 @@ public class TaskRunner : MonoBehaviour
             _projectStatus.AddValue(task.ProjectProgress);
 
         _activeTasks.Remove(task);
-        OnTaskCompleted?.Invoke(task);
+        OnTaskCompleted?.Invoke(task, team);
     }
 }
