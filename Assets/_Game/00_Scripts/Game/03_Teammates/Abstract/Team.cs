@@ -57,6 +57,8 @@ public class Team : MonoBehaviour
     public Task[] Tasks => _tasks;
     public MemoryBank MemoryBank => _memoryBank;
 
+    public bool IsFounder => _teamRole == TeamRole.FOUNDER;
+
     public bool HasInformation(string informationId)
     {
         if (string.IsNullOrEmpty(informationId)) return false;
@@ -244,8 +246,8 @@ public class Team : MonoBehaviour
         // Already completed
         if (_completedActions.ContainsKey(action)) return false;
 
-        // Energy check
-        if (_energyStatus != null && _energyStatus.CurrentValue < action.EnergyUsed * EnergyCostMultiplier)
+        // Energy check (Founder has unlimited energy)
+        if (_energyStatus != null && !IsFounder && _energyStatus.CurrentValue < action.EnergyUsed * EnergyCostMultiplier)
             return false;
 
         // Minimum day check
@@ -291,8 +293,8 @@ public class Team : MonoBehaviour
         // Apply action execution (status modifiers, etc.)
         action.ActionExecution?.ExecuteAction(this);
 
-        // Deduct energy
-        if (_energyStatus != null)
+        // Deduct energy (Founder has unlimited energy)
+        if (_energyStatus != null && !IsFounder)
             _energyStatus.AddValue(-action.EnergyUsed * EnergyCostMultiplier);
 
         // Grant information / memories
