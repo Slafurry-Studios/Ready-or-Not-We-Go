@@ -66,6 +66,22 @@ public class SleepController : MonoBehaviour
         _taskRunner?.PauseAll();
         _actionRunner?.PauseAll();
 
+        // Set non-player teams to INACTIVE while sleeping.
+        if (_taskRunner != null)
+        {
+            Team playerTeam = _taskRunner.PlayerTeam;
+            foreach (var team in _taskRunner.GetAllTeams())
+            {
+                if (team == null || team == playerTeam) continue;
+                if (team.TeamCondition == TeamCondition.TERMINATED) continue;
+                team.SetTeamCondition(TeamCondition.INACTIVE);
+            }
+
+            var chat = FindFirstObjectByType<ChatManager>();
+            if (chat != null)
+                chat.AddLine("System", "Non-player teams are now offline while you sleep.");
+        }
+
         if (_miniGame != null)
             _miniGame.StartGame();
 
@@ -101,6 +117,22 @@ public class SleepController : MonoBehaviour
         // Pause tasks and actions while sleeping; they resume on wake up.
         _taskRunner?.PauseAll();
         _actionRunner?.PauseAll();
+
+        // Set non-player teams to INACTIVE while sleeping.
+        if (_taskRunner != null)
+        {
+            Team playerTeam = _taskRunner.PlayerTeam;
+            foreach (var team in _taskRunner.GetAllTeams())
+            {
+                if (team == null || team == playerTeam) continue;
+                if (team.TeamCondition == TeamCondition.TERMINATED) continue;
+                team.SetTeamCondition(TeamCondition.INACTIVE);
+            }
+
+            var chat = FindFirstObjectByType<ChatManager>();
+            if (chat != null)
+                chat.AddLine("System", "Non-player teams are now offline while you sleep.");
+        }
 
         // Fade in the black panel when deep sleep begins.
         if (_fadePanel != null)
@@ -157,6 +189,22 @@ public class SleepController : MonoBehaviour
         // Resume tasks and actions that were paused during sleep.
         _taskRunner?.ResumeAll();
         _actionRunner?.ResumeAll();
+
+        // Set non-player teams back to ONLINE after sleep.
+        if (_taskRunner != null)
+        {
+            Team playerTeam = _taskRunner.PlayerTeam;
+            foreach (var team in _taskRunner.GetAllTeams())
+            {
+                if (team == null || team == playerTeam) continue;
+                if (team.TeamCondition == TeamCondition.TERMINATED) continue;
+                team.SetTeamCondition(TeamCondition.ONLINE);
+            }
+
+            var chat = FindFirstObjectByType<ChatManager>();
+            if (chat != null)
+                chat.AddLine("System", "Non-player teams are back online after sleep.");
+        }
 
         Debug.Log("Character woke up!");
 
