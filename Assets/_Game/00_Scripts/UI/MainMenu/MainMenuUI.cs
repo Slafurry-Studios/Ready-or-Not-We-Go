@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Slafurry.Systems.Scene;
+using Slafurry.Systems.Save;
 
 public class MainMenuUI : MonoBehaviour
 {
@@ -36,7 +37,18 @@ public class MainMenuUI : MonoBehaviour
 
     private void OnContinueClicked()
     {
-        Debug.Log("[MainMenuUI] Continue — not implemented.");
+        if (Save.Exists("gamesave"))
+        {
+            Debug.Log("[MainMenuUI] Continue — loading saved game.");
+            if (_gameScene != null)
+                SceneSystem.Load(_gameScene);
+            else
+                Debug.LogWarning("[MainMenuUI] _gameScene is not assigned.");
+        }
+        else
+        {
+            Debug.Log("[MainMenuUI] Continue — no save found. Start a new game instead.");
+        }
     }
 
     private void OnExitClicked()
