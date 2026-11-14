@@ -4,22 +4,13 @@ using Slafurry.Systems.Scene;
 [CreateAssetMenu(fileName = "Call Authorities", menuName = "Action Data/Call Authorities")]
 public class CallAuthoritiesAction : Action
 {
-    [Header("Proof Thresholds (MemoryBank.CurrentTotalSize)")]
-    [Tooltip("Minimum proof to avoid the worst ending.")]
-    [SerializeField] private float _minProofForAnySuccess = 10f;
-    [Tooltip("Minimum proof for a mediocre ending.")]
-    [SerializeField] private float _minProofForMediocreEnding = 20f;
-    [Tooltip("Minimum proof for a good ending.")]
-    [SerializeField] private float _minProofForGoodEnding = 35f;
-    [Tooltip("Minimum proof for the best ending.")]
-    [SerializeField] private float _minProofForBestEnding = 50f;
+    [Header("Proof Threshold")]
+    [Tooltip("Minimum proof (MemoryBank.CurrentTotalSize) needed to call authorities successfully.")]
+    [SerializeField] private float _minProofForSuccess = 10f;
 
     [Header("Ending Scenes")]
-    [SerializeField] private SceneReference _bestEndingScene;
-    [SerializeField] private SceneReference _goodEndingScene;
-    [SerializeField] private SceneReference _mediocreEndingScene;
-    [SerializeField] private SceneReference _badEndingScene;
-    [SerializeField] private SceneReference _worstEndingScene;
+    [SerializeField] private SceneReference _winScene;
+    [SerializeField] private SceneReference _gameOverScene;
 
     public override void ExecuteAction(Team team)
     {
@@ -32,28 +23,18 @@ public class CallAuthoritiesAction : Action
         var chat = UnityEngine.Object.FindFirstObjectByType<ChatManager>();
         if (chat != null)
         {
-            if (proof >= _minProofForBestEnding)
-                chat.AddLine("Founder", "You have enough evidence. The authorities will bury me.");
-            else if (proof >= _minProofForGoodEnding)
-                chat.AddLine("Founder", "Some proof... The authorities may investigate.");
-            else if (proof >= _minProofForMediocreEnding)
-                chat.AddLine("Founder", "Barely any evidence. They'll laugh at you.");
+            if (proof >= _minProofForSuccess)
+                chat.AddLine("Founder", $"You have {memoryCount} proof. The authorities will act on this.");
             else
-                chat.AddLine("Founder", "You call the authorities with nothing? How pathetic.");
+                chat.AddLine("Founder", $"Only {memoryCount} proof? The authorities won't care.");
         }
 
-        // Evaluate ending based on proof collected
-        if (proof >= _minProofForBestEnding && _bestEndingScene != null)
-            SceneSystem.Load(_bestEndingScene);
-        else if (proof >= _minProofForGoodEnding && _goodEndingScene != null)
-            SceneSystem.Load(_goodEndingScene);
-        else if (proof >= _minProofForMediocreEnding && _mediocreEndingScene != null)
-            SceneSystem.Load(_mediocreEndingScene);
-        else if (proof >= _minProofForAnySuccess && _badEndingScene != null)
-            SceneSystem.Load(_badEndingScene);
-        else if (_worstEndingScene != null)
-            SceneSystem.Load(_worstEndingScene);
+        // Win if enough proof, Game Over otherwise
+        if (proof >= _minProofForSuccess && _winScene != null)
+            SceneSystem.Load(_winScene);
+        else if (_gameOverScene != null)
+            SceneSystem.Load(_gameOverScene);
         else
-            Debug.Log("[CallAuthoritiesAction] No ending scene assigned for this proof level.");
+            Debug.Log("[CallAuthoritiesAction] No ending scene assigned.");
     }
 }

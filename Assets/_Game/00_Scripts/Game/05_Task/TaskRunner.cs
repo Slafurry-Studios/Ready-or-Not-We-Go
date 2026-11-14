@@ -87,6 +87,10 @@ public class TaskRunner : MonoBehaviour
         if (day == _lastDay) return;
         _lastDay = day;
 
+        // Announce day change with flavor chat
+        var chat = FindFirstObjectByType<ChatManager>();
+        chat?.AnnounceDayChange(day);
+
         var sprintTasks = _projectManager.GetTasksByDay(day);
 
         if (_teams != null)
@@ -96,7 +100,7 @@ public class TaskRunner : MonoBehaviour
                 if (team == null) continue;
                 if (team == _playerTeam) continue; // handled separately below
                 if (team.TeamCondition == TeamCondition.TERMINATED) continue;
-                if (team.TeamCondition == TeamCondition.INACTIVE) continue; // sleeping
+                if (team.IsSleeping) continue; // sleeping
 
                 SpawnTasksForTeam(team, sprintTasks, day);
             }
@@ -116,6 +120,11 @@ public class TaskRunner : MonoBehaviour
             if (hoursElapsed >= 24f)
             {
                 _deadlineChecked = true;
+
+                // Founder warns before the deadline hits
+                var founder = FindFirstObjectByType<FounderAI>();
+                founder?.AnnounceDeadlineWarning();
+
                 CheckDeadline();
             }
         }
@@ -232,11 +241,8 @@ public class TaskRunner : MonoBehaviour
         if (founder != null && founder.Team != team)
         {
             founder.InheritTasksFrom(team);
+            founder.AnnounceTeamTermination(team.Name);
         }
-
-        var chat = FindFirstObjectByType<ChatManager>();
-        if (chat != null)
-            chat.AddLine("Founder", $"{team.name} missed the deadline. Eliminated.");
     }
 
     /// <summary>True if every task across every team is COMPLETED.</summary>
@@ -258,9 +264,8 @@ public class TaskRunner : MonoBehaviour
 
     private void AnnounceSprintEnd()
     {
-        var chat = FindFirstObjectByType<ChatManager>();
-        if (chat != null)
-            chat.AddLine("Founder", "Sprint is over. Tasks are now available. Do not disappoint me.");
+        var founder = FindFirstObjectByType<FounderAI>();
+        founder?.AnnounceSprintEnd();
 
         Debug.Log("[TaskRunner] Sprint ended — tasks unlocked.");
     }

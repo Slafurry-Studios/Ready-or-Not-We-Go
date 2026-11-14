@@ -173,6 +173,8 @@ public class SleepController : MonoBehaviour
             foreach (var team in _taskRunner.GetAllTeams())
             {
                 if (team == null || team == playerTeam) continue;
+                if (team.TeamCondition == TeamCondition.TERMINATED) continue;
+                if (team.IsSleeping) continue;
                 _taskRunner.SimulateTaskProgressForSleep(team, elapsedHours);
                 _actionRunner?.SimulateActionProgressForSleep(team, elapsedHours);
             }
