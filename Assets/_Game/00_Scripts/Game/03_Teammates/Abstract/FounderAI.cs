@@ -5,6 +5,7 @@ public class FounderAI : MonoBehaviour, ITimedUpdate
 {
     [Header("References")]
     [SerializeField] private Team _team;
+    [SerializeField] private TaskRunner _taskRunner;
 
     [Header("Founder Settings")]
     [SerializeField] private float _searchInterval = 10f;
@@ -24,6 +25,17 @@ public class FounderAI : MonoBehaviour, ITimedUpdate
         "I don't tolerate laziness.",
     };
 
+    private readonly string[] _evidenceChat = new[]
+    {
+        "You're gathering evidence against me? How quaint.",
+        "More proof? It won't save you.",
+        "Collecting memories, are we? How touching.",
+        "Every piece of evidence brings you closer to your end.",
+        "Go ahead, collect your proof. It changes nothing.",
+    };
+
+    private int _lastPlayerMemoryCount = 0;
+
     private void Awake()
     {
         // Founder has unlimited energy and 2x execution speed.
@@ -41,6 +53,9 @@ public class FounderAI : MonoBehaviour, ITimedUpdate
                 _registered = true;
             }
         }
+
+        if (_taskRunner == null)
+            _taskRunner = FindFirstObjectByType<TaskRunner>();
     }
 
     private void OnDisable()
@@ -49,8 +64,10 @@ public class FounderAI : MonoBehaviour, ITimedUpdate
         {
             var timeCounter = FindFirstObjectByType<TimeCounter>();
             if (timeCounter != null)
+            {
                 timeCounter.Unregister(this);
-            _registered = false;
+                _registered = false;
+            }
         }
     }
 
@@ -75,6 +92,8 @@ public class FounderAI : MonoBehaviour, ITimedUpdate
             _chatTimer = 0f;
             AnnounceSprintPressure();
         }
+
+        CheckPlayerEvidence();
     }
 
     private void AnnounceSprintPressure()
@@ -87,6 +106,26 @@ public class FounderAI : MonoBehaviour, ITimedUpdate
 
         int index = Random.Range(0, _sprintThreats.Length);
         chat.AddLine("Founder", _sprintThreats[index]);
+    }
+
+    private void CheckPlayerEvidence()
+    {
+        var playerTeam = _taskRunner?.PlayerTeam;
+        if (playerTeam == null || playerTeam.MemoryBank == null) return;
+
+        int currentCount = playerTeam.MemoryBank.memories?.Length ?? 0;
+
+        if (currentCount > _lastPlayerMemoryCount)
+        {
+            _lastPlayerMemoryCount = currentCount;
+
+            var chat = FindFirstObjectByType<ChatManager>();
+            if (chat != null)
+            {
+                int index = Random.Range(0, _evidenceChat.Length);
+                chat.AddLine("Founder", _evidenceChat[index]);
+            }
+        }
     }
 
     /// <summary>

@@ -54,8 +54,6 @@ public class Team : MonoBehaviour
 
     public static void ResetAllRuntimeStatus() => _runtimeTaskStatus.Clear();
 
-    public static void ResetAllRuntimeStatus() => _runtimeTaskStatus.Clear();
-
     public string ID => _id;
     public string Name => _name;
     public TeamRole TeamRole => _teamRole;
