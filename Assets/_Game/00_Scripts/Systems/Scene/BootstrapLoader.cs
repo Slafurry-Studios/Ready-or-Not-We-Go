@@ -61,7 +61,7 @@ namespace Slafurry.Systems.Bootstrap
 
             Debug.Log($"[BootstrapLoader] All systems ready. Moving to scene '{targetScene}'.");
 
-            if (targetScene != null)
+            if (targetScene == null)
             {
                 Debug.LogError("[BootstrapLoader] targetScene is empty! Set it in the inspector.");
                 yield break;

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ada9407744346c1039e128cc2fb28a94, type: 3}
+  m_Name: A-22
+  m_EditorClassIdentifier: Assembly-CSharp::CallAuthoritiesAction
+  _actionId: A-22
+  _actionName: Call Authorities
+  _duration: 5
+  _energyUsed: 5
+  _requiredInformation: []
+  MinimumDay: 0
+  _informationGotten: []
+  _nextActions: []
+  _actionExecution:
+    rid: -2
+  _minProofForSuccess: 10
+  _winScene: {fileID: 11400000, guid: 9393b00622f7af846a289c86fe36d0a0, type: 2}
+  _gameOverScene: {fileID: 11400000, guid: 09bf880e9dafd9a25a744fecd56e90b6, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
