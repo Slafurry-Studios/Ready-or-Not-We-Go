@@ -4,7 +4,7 @@ using Slafurry.Systems.Scene;
 public class GameOverUI : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private TaskRunner _taskRunner;
+    [SerializeField] private SceneReference _gameScene;
     [SerializeField] private SceneReference _mainMenuScene;
 
     [Header("Buttons (assign in Inspector)")]
@@ -28,10 +28,12 @@ public class GameOverUI : MonoBehaviour
 
     private void OnRetryClicked()
     {
-        if (_taskRunner != null)
-            _taskRunner.ResetGameDay1();
+        // No save data carried between scenes — reloading the game scene
+        // starts fresh from day 1.
+        if (_gameScene != null)
+            SceneSystem.Load(_gameScene);
         else
-            Debug.LogWarning("[GameOverUI] _taskRunner is not assigned.");
+            Debug.LogWarning("[GameOverUI] _gameScene is not assigned.");
     }
 
     private void OnMainMenuClicked()
