@@ -48,6 +48,12 @@ public class Team : MonoBehaviour
 
     public static void ResetTerminatedCount() => _terminatedCount = 0;
 
+    public static int GetTerminatedCount() => _terminatedCount;
+
+    public static void SetTerminatedCount(int count) => _terminatedCount = count;
+
+    public static void ResetAllRuntimeStatus() => _runtimeTaskStatus.Clear();
+
     public static void ResetAllRuntimeStatus() => _runtimeTaskStatus.Clear();
 
     public string ID => _id;
@@ -141,6 +147,36 @@ public class Team : MonoBehaviour
     {
         _tasks = tasks;
         OnTasksChanged?.Invoke();
+    }
+
+    /// <summary>Returns IDs of tasks assigned to this team that are COMPLETED.</summary>
+    public List<string> GetCompletedTaskIds()
+    {
+        var completed = new List<string>();
+        if (_tasks == null) return completed;
+
+        foreach (var t in _tasks)
+        {
+            if (t == null) continue;
+            if (GetTaskStatus(t) == TaskStatus.COMPLETED)
+                completed.Add(t.TaskId);
+        }
+        return completed;
+    }
+
+    /// <summary>Restores task statuses for this team's tasks by TaskId.</summary>
+    public void RestoreTaskStatuses(List<string> completedTaskIds)
+    {
+        if (_tasks == null) return;
+
+        var completedSet = new HashSet<string>(completedTaskIds ?? new List<string>());
+
+        foreach (var t in _tasks)
+        {
+            if (t == null) continue;
+            var status = completedSet.Contains(t.TaskId) ? TaskStatus.COMPLETED : TaskStatus.NOT_STARTED;
+            SetTaskStatus(t, status);
+        }
     }
 
     public void SetAvailableActions(Action[] actions)

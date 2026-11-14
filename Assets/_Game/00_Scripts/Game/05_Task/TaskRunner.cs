@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Slafurry.Systems.Scene;
+using Slafurry.Systems.Save;
 
 public class TaskRunner : MonoBehaviour
 {
@@ -46,9 +47,18 @@ public class TaskRunner : MonoBehaviour
     {
         if (_timeCounter == null) return;
 
-        // Record game start time on first frame.
+        // Record game start time on first frame, loading a save if one exists.
         if (_gameStartTime == 0f)
-            _gameStartTime = _timeCounter.CurrentTime;
+        {
+            if (HasSave() && LoadGame())
+            {
+                // Save already set _gameStartTime, _lastDay, _deadlineChecked.
+            }
+            else
+            {
+                _gameStartTime = _timeCounter.CurrentTime;
+            }
+        }
 
         int day = _timeCounter.CurrentDay;
         if (day == _lastDay) return;
@@ -209,6 +219,83 @@ public class TaskRunner : MonoBehaviour
         // Reload the current game scene from day 1.
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    /// <summary>Save current game state to a file.</summary>
+    public void SaveGame(string fileName = "gamesave")
+    {
+        if (_timeCounter == null) return;
+
+        var data = new GameSaveData
+        {
+            currentDay = _timeCounter.CurrentDay,
+            currentTimeSeconds = _timeCounter.CurrentTime,
+            gameStartTimeSeconds = _gameStartTime,
+            terminatedCount = Team.GetTerminatedCount()
+        };
+
+        // Collect completed task IDs and terminated team IDs from all teams.
+        foreach (var team in GetAllTeams())
+        {
+            if (team == null) continue;
+
+            data.completedTaskIds.AddRange(team.GetCompletedTaskIds());
+
+            if (team.TeamCondition == TeamCondition.TERMINATED)
+                data.terminatedTeamIds.Add(team.ID);
+        }
+
+        Save.To(data, fileName);
+        Debug.Log($"[TaskRunner] Game saved to '{fileName}' (day {data.currentDay}, time {data.currentTimeSeconds:F0}s).");
+    }
+
+    /// <summary>Load game state from a file. Returns true if a save was found and loaded.</summary>
+    public bool LoadGame(string fileName = "gamesave")
+    {
+        if (_timeCounter == null) return false;
+
+        if (!Save.Exists(fileName))
+        {
+            Debug.Log($"[TaskRunner] No save found at '{fileName}'.");
+            return false;
+        }
+
+        var data = Save.From<GameSaveData>(fileName, new GameSaveData());
+
+        // Restore time.
+        _timeCounter.SetCurrentTime(data.currentTimeSeconds);
+        _gameStartTime = data.gameStartTimeSeconds;
+
+        // Restore terminated count.
+        Team.SetTerminatedCount(data.terminatedCount);
+
+        // Restore team conditions and task statuses.
+        foreach (var team in GetAllTeams())
+        {
+            if (team == null) continue;
+
+            team.SetTeamCondition(
+                data.terminatedTeamIds.Contains(team.ID)
+                    ? TeamCondition.TERMINATED
+                    : TeamCondition.ONLINE
+            );
+            team.RestoreTaskStatuses(data.completedTaskIds);
+        }
+
+        // Prevent re-spawning tasks on the loaded day.
+        _lastDay = _timeCounter.CurrentDay;
+
+        // Deadline already evaluated in the saved state.
+        _deadlineChecked = _timeCounter.CurrentTime - _gameStartTime >= 24f * 60f * _timeCounter.MinuteToSecondRatio;
+
+        Debug.Log(
+            $"[TaskRunner] Game loaded from '{fileName}' (day {data.currentDay}, " +
+            $"time {data.currentTimeSeconds:F0}s, terminated={data.terminatedCount})."
+        );
+        return true;
+    }
+
+    /// <summary>Check if a save file exists.</summary>
+    public bool HasSave(string fileName = "gamesave") => Save.Exists(fileName);
 
     /// <summary>Called by TaskPopup when player clicks a variant button. Runs on this persistent object so the timer survives popup deactivation.</summary>
     public event System.Action<Task, Team> OnTaskCompleted;
