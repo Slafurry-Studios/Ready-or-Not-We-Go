@@ -327,7 +327,7 @@ public class Team : MonoBehaviour
     private void CompleteAction(Action action)
     {
         // Apply action execution (status modifiers, etc.)
-        action.ActionExecution?.ExecuteAction(this);
+        action.ExecuteAction(this);
 
         // Deduct energy (Founder has unlimited energy)
         if (_energyStatus != null && !IsFounder)

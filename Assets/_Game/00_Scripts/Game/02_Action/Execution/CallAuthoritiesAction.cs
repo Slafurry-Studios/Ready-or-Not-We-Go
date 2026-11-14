@@ -1,8 +1,8 @@
 using UnityEngine;
 using Slafurry.Systems.Scene;
 
-[System.Serializable]
-public class CallAuthoritiesExecution : ActionExecution
+[CreateAssetMenu(fileName = "Call Authorities", menuName = "Action Data/Call Authorities")]
+public class CallAuthoritiesAction : Action
 {
     [Header("Proof Thresholds (MemoryBank.CurrentTotalSize)")]
     [Tooltip("Minimum proof to avoid the worst ending.")]
@@ -54,6 +54,6 @@ public class CallAuthoritiesExecution : ActionExecution
         else if (_worstEndingScene != null)
             SceneSystem.Load(_worstEndingScene);
         else
-            Debug.Log("[CallAuthoritiesExecution] No ending scene assigned for this proof level.");
+            Debug.Log("[CallAuthoritiesAction] No ending scene assigned for this proof level.");
     }
 }
