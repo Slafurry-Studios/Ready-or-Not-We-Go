@@ -8,9 +8,21 @@ public class FounderAI : MonoBehaviour, ITimedUpdate
 
     [Header("Founder Settings")]
     [SerializeField] private float _searchInterval = 10f;
+    [SerializeField] private float _chatInterval = 30f;
 
     private bool _registered;
     private float _searchTimer;
+    private float _chatTimer;
+
+    private readonly string[] _sprintThreats = new[]
+    {
+        "Two hours. That's all you get. Don't waste it.",
+        "The sprint starts now. No idle hands.",
+        "I'm watching. Every second counts.",
+        "Fail to finish, and you're replaced.",
+        "Time is running out. Work faster.",
+        "I don't tolerate laziness.",
+    };
 
     private void Awake()
     {
@@ -48,6 +60,7 @@ public class FounderAI : MonoBehaviour, ITimedUpdate
 
         // Founder has unlimited energy — no energy drain from suspicion.
         _searchTimer += Time.deltaTime;
+        _chatTimer += Time.deltaTime;
 
         if (_searchTimer >= _searchInterval)
         {
@@ -55,6 +68,25 @@ public class FounderAI : MonoBehaviour, ITimedUpdate
 
             // Founder does not drain energy.
         }
+
+        // Founder chats during sprint to pressure the teams.
+        if (_chatTimer >= _chatInterval)
+        {
+            _chatTimer = 0f;
+            AnnounceSprintPressure();
+        }
+    }
+
+    private void AnnounceSprintPressure()
+    {
+        var taskRunner = FindFirstObjectByType<TaskRunner>();
+        if (taskRunner == null || !taskRunner.IsSprintActive) return;
+
+        var chat = FindFirstObjectByType<ChatManager>();
+        if (chat == null) return;
+
+        int index = Random.Range(0, _sprintThreats.Length);
+        chat.AddLine("Founder", _sprintThreats[index]);
     }
 
     /// <summary>
