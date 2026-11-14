@@ -28,7 +28,7 @@ public class CallAuthoritiesExecution : ActionExecution
         int memoryCount = team.MemoryBank?.memories?.Length ?? 0;
 
         // Founder reacts to the player calling authorities
-        var chat = FindFirstObjectByType<ChatManager>();
+        var chat = UnityEngine.Object.FindFirstObjectByType<ChatManager>();
         if (chat != null)
         {
             if (proof >= _minProofForBestEnding)
