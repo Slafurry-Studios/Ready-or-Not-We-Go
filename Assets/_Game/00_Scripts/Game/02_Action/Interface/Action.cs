@@ -30,4 +30,10 @@ public class Action : ScriptableObject
     public Action[] NextActions => _nextActions;
 
     public ActionExecution ActionExecution => _actionExecution;
+
+    /// <summary>Execute this action on a team. Subclasses can override for custom behavior.</summary>
+    public virtual void ExecuteAction(Team team)
+    {
+        _actionExecution?.ExecuteAction(team);
+    }
 }
