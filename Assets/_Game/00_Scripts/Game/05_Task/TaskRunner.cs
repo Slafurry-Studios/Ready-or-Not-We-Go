@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Slafurry.Systems.Scene;
 
 public class TaskRunner : MonoBehaviour
 {
@@ -19,7 +21,14 @@ public class TaskRunner : MonoBehaviour
     [Tooltip("Player character team. Excluded from _teams array processing.")]
     [SerializeField] private Team _playerTeam;
 
+    [Header("Game Loop")]
+    [SerializeField] private string _gameOverSceneName = "GameOver";
+    [SerializeField] private string _winSceneName = "Win";
+    [SerializeField] private string _mainMenuSceneName = "MainMenu";
+
     private int _lastDay = -1;
+    private float _gameStartTime;
+    private bool _deadlineChecked;
     private readonly Dictionary<Task, ActiveTaskEntry> _activeTasks = new();
     private bool _isPaused;
 
@@ -35,6 +44,12 @@ public class TaskRunner : MonoBehaviour
 
     private void Update()
     {
+        if (_timeCounter == null) return;
+
+        // Record game start time on first frame.
+        if (_gameStartTime == 0f)
+            _gameStartTime = _timeCounter.CurrentTime;
+
         int day = _timeCounter.CurrentDay;
         if (day == _lastDay) return;
         _lastDay = day;
@@ -55,6 +70,19 @@ public class TaskRunner : MonoBehaviour
         // Player character also receives sprint-based tasks
         if (_playerTeam != null)
             SpawnTasksForTeam(_playerTeam, sprintTasks, day);
+
+        // 24-hour deadline check: any incomplete task → Game Over, all complete → Win.
+        if (!_deadlineChecked)
+        {
+            float secondsPerHour = 60f * _timeCounter.MinuteToSecondRatio;
+            float hoursElapsed = (_timeCounter.CurrentTime - _gameStartTime) / secondsPerHour;
+
+            if (hoursElapsed >= 24f)
+            {
+                _deadlineChecked = true;
+                CheckDeadline();
+            }
+        }
     }
 
     private void SpawnTasksForTeam(Team team, Task[] sprintTasks, int day)
@@ -115,6 +143,73 @@ public class TaskRunner : MonoBehaviour
         return all.ToArray();
     }
 
+    /// <summary>Check if any assigned task is incomplete at the 24-hour deadline.</summary>
+    private void CheckDeadline()
+    {
+        bool anyIncomplete = false;
+
+        foreach (var team in GetAllTeams())
+        {
+            if (team == null || team.TeamCondition == TeamCondition.TERMINATED) continue;
+
+            foreach (var task in team.Tasks)
+            {
+                if (task == null) continue;
+                if (team.GetTaskStatus(task) != TaskStatus.COMPLETED)
+                {
+                    anyIncomplete = true;
+                    break;
+                }
+            }
+
+            if (anyIncomplete) break;
+        }
+
+        if (anyIncomplete)
+            TriggerGameOver();
+        else
+            TriggerWin();
+    }
+
+    /// <summary>Load the Game Over scene.</summary>
+    public void TriggerGameOver()
+    {
+        Debug.Log("[TaskRunner] Deadline missed — incomplete tasks remain. Game Over.");
+        SceneSystem.Load(_gameOverSceneName);
+    }
+
+    /// <summary>Load the Win scene.</summary>
+    public void TriggerWin()
+    {
+        Debug.Log("[TaskRunner] All tasks completed before deadline. Win!");
+        SceneSystem.Load(_winSceneName);
+    }
+
+    /// <summary>Reset all state and reload the game scene from day 1 (used by Game Over Retry).</summary>
+    public void ResetGameDay1()
+    {
+        Team.ResetTerminatedCount();
+        Team.ResetAllRuntimeStatus();
+
+        foreach (var team in GetAllTeams())
+        {
+            if (team == null) continue;
+            team.SetTeamCondition(TeamCondition.ONLINE);
+
+            foreach (var task in team.Tasks)
+            {
+                if (task != null)
+                    team.SetTaskStatus(task, TaskStatus.NOT_STARTED);
+            }
+        }
+
+        _gameStartTime = _timeCounter != null ? _timeCounter.CurrentTime : 0f;
+        _deadlineChecked = false;
+
+        // Reload the current game scene from day 1.
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     /// <summary>Called by TaskPopup when player clicks a variant button. Runs on this persistent object so the timer survives popup deactivation.</summary>
     public event System.Action<Task, Team> OnTaskCompleted;
 
@@ -160,7 +255,10 @@ public class TaskRunner : MonoBehaviour
         while (elapsed < seconds)
         {
             while (_isPaused) yield return null;
-            elapsed += Time.deltaTime;
+
+            // Founder executes 2x faster.
+            float speedMultiplier = team.IsFounder ? 2f : 1f;
+            elapsed += Time.deltaTime * speedMultiplier;
             team.SetTaskProgress(task, elapsed / seconds);
             yield return null;
         }
