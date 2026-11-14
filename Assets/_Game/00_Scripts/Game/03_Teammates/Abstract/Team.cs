@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Team : MonoBehaviour
 {
@@ -42,10 +43,10 @@ public class Team : MonoBehaviour
             Debug.LogWarning($"[Team] {name}: _energyStatus is null. Put EnergyStatus on same GameObject as Team, or assign in Inspector.");
 
         // Randomize initial sleep state
-        if (_timeCounter != null && Random.value < 0.3f)
+        if (_timeCounter != null && UnityEngine.Random.value < 0.3f)
         {
             _isSleeping = true;
-            _sleepDuration = Random.Range(_minSleepHours, _maxSleepHours);
+            _sleepDuration = UnityEngine.Random.Range(_minSleepHours, _maxSleepHours);
             _sleepTimer = 0f;
         }
     }
@@ -225,7 +226,7 @@ public class Team : MonoBehaviour
             "Just one more day... that's all I ask.",
             "Please... have mercy."
         };
-        return lastWords[Random.Range(0, lastWords.Length)];
+        return lastWords[UnityEngine.Random.Range(0, lastWords.Length)];
     }
 
     public void SetTasks(Task[] tasks)
@@ -244,15 +245,23 @@ public class Team : MonoBehaviour
         // Decide whether to go to sleep based on task completion
         if (!_isSleeping && _teamCondition == TeamCondition.ONLINE)
         {
-            bool allTasksCompleted = _tasks != null && _tasks.Length > 0 &&
-                _tasks.All(t => t != null && GetTaskStatus(t) == TaskStatus.COMPLETED);
+            bool allTasksCompleted = _tasks != null && _tasks.Length > 0;
+
+            foreach (var t in _tasks)
+            {
+                if (t == null || GetTaskStatus(t) != TaskStatus.COMPLETED)
+                {
+                    allTasksCompleted = false;
+                    break;
+                }
+            }
 
             if (allTasksCompleted)
             {
                 // Small chance each frame to go to sleep when all tasks are done
-                if (Random.value < 0.0001f)
+                if (UnityEngine.Random.value < 0.0001f)
                 {
-                    float sleepDuration = Random.Range(_minSleepHours, _maxSleepHours);
+                    float sleepDuration = UnityEngine.Random.Range(_minSleepHours, _maxSleepHours);
                     GoToSleep(sleepDuration);
                 }
             }
