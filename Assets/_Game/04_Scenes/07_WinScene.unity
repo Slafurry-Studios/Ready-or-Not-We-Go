@@ -513,6 +513,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WinUI
   _mainMenuScene: {fileID: 11400000, guid: 9fd6a2a74a7e55db08864a41fa939ac1, type: 2}
+  _reasonText: {fileID: 734530102}
   _mainMenuBtn: {fileID: 884836774}
   _exitBtn: {fileID: 1301822740}
 --- !u!1 &734530100

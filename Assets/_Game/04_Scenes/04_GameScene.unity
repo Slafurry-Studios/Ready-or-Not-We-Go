@@ -1658,6 +1658,7 @@ MonoBehaviour:
   _pendulumImage: {fileID: 167847044}
   _target: {fileID: 1738517546}
   _railing: {fileID: 1699535556}
+  _panel: {fileID: 1474687905}
   _sleepController: {fileID: 992060210}
   _timeCounter: {fileID: 375266255}
   _energyStatus: {fileID: 145782004}
