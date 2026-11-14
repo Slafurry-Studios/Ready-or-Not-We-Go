@@ -1240,10 +1240,12 @@ MonoBehaviour:
   _energyStatus: {fileID: 145782004}
   _miniGame: {fileID: 1474687908}
   _fadePanel: {fileID: 1739769913}
+  _taskRunner: {fileID: 0}
+  _actionRunner: {fileID: 0}
   _normalSleepMultiplier: 4
   _deepSleepMultiplier: 8
   _deepSleepWakeUpEnergy: 80
-  _maxDeepSleepHours: 10
+  _minDeepSleepHours: 2
   _fadeDuration: 0.5
   _onWakeUp:
     m_PersistentCalls:
@@ -2474,7 +2476,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FounderAI
   _team: {fileID: 2043844998}
-  _suspicionIncreasePerTick: 5
   _searchInterval: 10
 --- !u!114 &522734796127404318
 MonoBehaviour:
