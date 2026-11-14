@@ -23,6 +23,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Game/04_Scenes/05_VisualNovelScene.unity
     guid: 6827c97c3bf501fd68fa80215baece82
+  - enabled: 1
+    path: Assets/_Game/04_Scenes/06_GameOverScene.unity
+    guid: d584f193787fe55598387655c49de133
+  - enabled: 1
+    path: Assets/_Game/04_Scenes/07_WinScene.unity
+    guid: dd28451a478e1a5389d8223157de62f5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: befec698e108ad6c6af4d3aaeaa0f9b0,
       type: 3}
