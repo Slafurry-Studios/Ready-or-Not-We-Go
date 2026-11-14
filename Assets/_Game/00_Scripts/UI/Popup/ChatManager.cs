@@ -47,26 +47,75 @@ public class ChatManager : MonoBehaviour
     private void OnTaskCompleted(Task task, Team team)
     {
         if (task == null || team == null) return;
-        AddLine(team.Name, $"finished {task.TaskName}.");
+
+        var lines = new[]
+        {
+            $"{team.Name} finished {task.TaskName}.",
+            $"{task.TaskName} is done, courtesy of {team.Name}.",
+            $"{team.Name} completed {task.TaskName}.",
+            $"{task.TaskName} wrapped up by {team.Name}.",
+            $"{team.Name} checked off {task.TaskName}.",
+            $"{task.TaskName}: finished. Credit to {team.Name}.",
+            $"{team.Name} delivered {task.TaskName}.",
+            $"{task.TaskName} — completed. {team.Name} did it.",
+            $"{team.Name} wrapped {task.TaskName}.",
+            $"{task.TaskName} marked complete by {team.Name}."
+        };
+        AddLine(team.Name, lines[Random.Range(0, lines.Length)]);
     }
 
     private void OnTaskStarted(Task task, Team team, bool isForced)
     {
         if (task == null || team == null) return;
+
         if (isForced)
-            AddLine(team.Name, $"was forced to work on {task.TaskName}.");
+        {
+            var forcedLines = new[]
+            {
+                $"{team.Name} was forced to work on {task.TaskName}.",
+                $"{team.Name} reluctantly started {task.TaskName}.",
+                $"{task.TaskName}: forced onto {team.Name}.",
+                $"{team.Name} dragging themselves to {task.TaskName}.",
+                $"{task.TaskName} assigned to {team.Name}. Whether they like it or not."
+            };
+            AddLine(team.Name, forcedLines[Random.Range(0, forcedLines.Length)]);
+        }
         else
-            AddLine(team.Name, $"started working on {task.TaskName}.");
+        {
+            var lines = new[]
+            {
+                $"{team.Name} started {task.TaskName}.",
+                $"{task.TaskName} begun by {team.Name}.",
+                $"{team.Name} is working on {task.TaskName}.",
+                $"{task.TaskName} — {team.Name} on it.",
+                $"{team.Name} picked up {task.TaskName}.",
+                $"{task.TaskName} in progress by {team.Name}.",
+                $"{team.Name} diving into {task.TaskName}.",
+                $"{task.TaskName}: started by {team.Name}.",
+                $"{team.Name} kicked off {task.TaskName}.",
+                $"{task.TaskName} assigned to {team.Name}. Work begins."
+            };
+            AddLine(team.Name, lines[Random.Range(0, lines.Length)]);
+        }
     }
 
     private void OnInformationGained(Information info)
     {
         if (info == null) return;
+
         foreach (var team in FindObjectsByType<Team>(FindObjectsSortMode.None))
         {
             if (team.HasInformation(info.InformationId))
             {
-                AddLine(team.Name, $"learned {info.InformationName}.");
+                var lines = new[]
+                {
+                    $"{team.Name} learned {info.InformationName}.",
+                    $"{team.Name} gained intel: {info.InformationName}.",
+                    $"{info.InformationName} acquired by {team.Name}.",
+                    $"{team.Name} discovered {info.InformationName}.",
+                    $"{team.Name} now knows: {info.InformationName}."
+                };
+                AddLine(team.Name, lines[Random.Range(0, lines.Length)]);
                 break;
             }
         }
@@ -92,5 +141,43 @@ public class ChatManager : MonoBehaviour
         }
 
         _displayCoroutine = null;
+    }
+
+    /// <summary>Announce day change with flavor.</summary>
+    public void AnnounceDayChange(int day)
+    {
+        var lines = new[]
+        {
+            $"Day {day} begins. Try not to disappoint me.",
+            $"New day: {day}. Your tasks await.",
+            $"Day {day}. Fresh start. Same expectations.",
+            $"Another day. Another chance to fail. Day {day}.",
+            $"Day {day} dawns. Get to work.",
+            $"{day}: Another rotation. Another sprint.",
+            $"Day {day}. The grind continues.",
+            $"Welcome to day {day}. Don't waste it.",
+            $"Day {day} starts now. No excuses.",
+            $"{day}. Same stakes. Higher pressure."
+        };
+        AddLine("System", lines[Random.Range(0, lines.Length)]);
+    }
+
+    /// <summary>Announce that a team was terminated.</summary>
+    public void AnnounceTeamTerminated(string teamName)
+    {
+        var lines = new[]
+        {
+            $"{teamName} missed the deadline. Eliminated.",
+            $"{teamName} is out. Terminated.",
+            $"{teamName} couldn't keep up. Gone.",
+            $"{teamName}: terminated.",
+            $"Consider {teamName} removed.",
+            $"{teamName} didn't survive the deadline.",
+            $"{teamName} — terminated. Efficiency restored.",
+            $"Failure to perform: {teamName}. Result: elimination.",
+            $"{teamName} is history.",
+            $"{teamName} failed to meet standards. Removed."
+        };
+        AddLine("Founder", lines[Random.Range(0, lines.Length)]);
     }
 }

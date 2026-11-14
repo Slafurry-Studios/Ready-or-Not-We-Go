@@ -292,6 +292,17 @@ PrefabInstance:
       propertyPath: _memoryBank.MaxSize
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 4190506902420798739, guid: 6c79a2cbd00e8a78c8c23d5d5fa093ad,
+        type: 3}
+      propertyPath: _actionCollection.Array.size
+      value: 28
+      objectReference: {fileID: 0}
+    - target: {fileID: 4190506902420798739, guid: 6c79a2cbd00e8a78c8c23d5d5fa093ad,
+        type: 3}
+      propertyPath: '_actionCollection.Array.data[27]'
+      value: 
+      objectReference: {fileID: 11400000, guid: d2168225c4a5fccee8f52c0c8cf6ab45,
+        type: 2}
     - target: {fileID: 6310008014850152510, guid: 6c79a2cbd00e8a78c8c23d5d5fa093ad,
         type: 3}
       propertyPath: m_Name
@@ -758,6 +769,7 @@ MonoBehaviour:
   _gameOverScene: {fileID: 11400000, guid: 09bf880e9dafd9a25a744fecd56e90b6, type: 2}
   _winScene: {fileID: 11400000, guid: 9393b00622f7af846a289c86fe36d0a0, type: 2}
   _mainMenuScene: {fileID: 11400000, guid: 9fd6a2a74a7e55db08864a41fa939ac1, type: 2}
+  _sprintDurationHours: 2
 --- !u!114 &375266259
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2479,7 +2491,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FounderAI
   _team: {fileID: 2043844998}
+  _taskRunner: {fileID: 0}
   _searchInterval: 10
+  _chatInterval: 30
 --- !u!114 &522734796127404318
 MonoBehaviour:
   m_ObjectHideFlags: 0
