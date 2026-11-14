@@ -981,6 +981,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameOverUI
   _gameScene: {fileID: 11400000, guid: 2eb60606b87caaab1983fbb06c982602, type: 2}
   _mainMenuScene: {fileID: 11400000, guid: 9fd6a2a74a7e55db08864a41fa939ac1, type: 2}
+  _reasonText: {fileID: 1725402295}
   _retryBtn: {fileID: 93209755}
   _mainMenuBtn: {fileID: 291818328}
   _exitBtn: {fileID: 2046734458}
