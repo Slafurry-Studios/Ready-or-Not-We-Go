@@ -10,7 +10,15 @@ public class ActionRunner : MonoBehaviour
     [SerializeField] private EnergyStatus _artsyEnergy;
     [SerializeField] private ProjectStatus _projectStatus;
 
-    private readonly Dictionary<Action, Coroutine> _activeActions = new();
+    private readonly Dictionary<Action, ActiveActionEntry> _activeActions = new();
+    private bool _isPaused;
+
+    private class ActiveActionEntry
+    {
+        public Coroutine Coroutine;
+        public Team Team;
+        public float Duration;
+    }
 
     public event System.Action<Action> OnActionCompleted;
 
@@ -36,18 +44,81 @@ public class ActionRunner : MonoBehaviour
         }
 
         // Timed actions run a coroutine on this persistent object
-        var coroutine = StartCoroutine(ExecuteActionRoutine(action, team));
-        _activeActions[action] = coroutine;
+        var entry = new ActiveActionEntry
+        {
+            Team = team,
+            Duration = action.Duration
+        };
+        var coroutine = StartCoroutine(ExecuteActionRoutine(action, team, entry));
+        entry.Coroutine = coroutine;
+        _activeActions[action] = entry;
         return true;
     }
 
-    private IEnumerator ExecuteActionRoutine(Action action, Team team)
+    /// <summary>Pause all active action coroutines (called when sleep starts).</summary>
+    public void PauseAll() => _isPaused = true;
+
+    /// <summary>Resume all active action coroutines (called when sleep ends).</summary>
+    public void ResumeAll() => _isPaused = false;
+
+    /// <summary>Simulate progress for all active actions of a team over elapsed game hours.</summary>
+    public void SimulateActionProgressForSleep(Team team, float elapsedHours)
+    {
+        if (team == null) return;
+
+        float secondsPerHour = 60f * _timeCounter.MinuteToSecondRatio;
+        float secondsToAdvance = elapsedHours * secondsPerHour;
+
+        var toComplete = new List<Action>();
+        foreach (var kvp in _activeActions)
+        {
+            if (kvp.Value.Team != team) continue;
+
+            float progressIncrement = secondsToAdvance / kvp.Value.Duration;
+            float currentProgress = team.GetActionProgress(kvp.Key);
+            float newProgress = Mathf.Clamp01(currentProgress + progressIncrement);
+            team.SetActionProgress(kvp.Key, newProgress);
+
+            if (newProgress >= 1f)
+                toComplete.Add(kvp.Key);
+        }
+
+        foreach (var action in toComplete)
+        {
+            if (!_activeActions.TryGetValue(action, out var entry)) continue;
+            CompleteActionFromSleep(action, entry.Team);
+        }
+    }
+
+    private void CompleteActionFromSleep(Action action, Team team)
+    {
+        action.ActionExecution?.ExecuteAction(team);
+
+        if (_artsyEnergy != null)
+            _artsyEnergy.AddValue(-action.EnergyUsed);
+
+        if (action.InformationGotten != null)
+        {
+            foreach (var mem in action.InformationGotten)
+            {
+                if (mem != null && mem.information != null)
+                    team.GrantInformation(mem.information);
+            }
+        }
+
+        team.SetActionCompleted(action, true);
+        _activeActions.Remove(action);
+        OnActionCompleted?.Invoke(action);
+    }
+
+    private IEnumerator ExecuteActionRoutine(Action action, Team team, ActiveActionEntry entry)
     {
         float elapsed = 0f;
-        float duration = action.Duration;
+        float duration = entry.Duration;
 
         while (elapsed < duration)
         {
+            while (_isPaused) yield return null;
             elapsed += Time.deltaTime;
             team.SetActionProgress(action, Mathf.Clamp01(elapsed / duration));
             yield return null;
