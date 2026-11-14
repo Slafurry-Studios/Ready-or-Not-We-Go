@@ -183,6 +183,9 @@ public class SleepController : MonoBehaviour
         _isSleeping = false;
         _isDeepSleeping = false;
 
+        // Hide the mini game UI after sleep ends.
+        _miniGame?.Hide();
+
         _energyStatus.SetSleeping(false);
         _timeCounter.SetTimeMultiplier(1f);
 

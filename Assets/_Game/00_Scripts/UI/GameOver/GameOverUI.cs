@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 using Slafurry.Systems.Scene;
 
 public class GameOverUI : MonoBehaviour
@@ -6,17 +7,25 @@ public class GameOverUI : MonoBehaviour
     [Header("References")]
     [SerializeField] private SceneReference _gameScene;
     [SerializeField] private SceneReference _mainMenuScene;
+    [SerializeField] private TextMeshProUGUI _reasonText;
 
     [Header("Buttons (assign in Inspector)")]
     [SerializeField] private UnityEngine.UI.Button _retryBtn;
     [SerializeField] private UnityEngine.UI.Button _mainMenuBtn;
     [SerializeField] private UnityEngine.UI.Button _exitBtn;
 
+    public static string Reason { get; set; } = "";
+
     private void Awake()
     {
         if (_retryBtn != null) _retryBtn.onClick.AddListener(OnRetryClicked);
         if (_mainMenuBtn != null) _mainMenuBtn.onClick.AddListener(OnMainMenuClicked);
         if (_exitBtn != null) _exitBtn.onClick.AddListener(OnExitClicked);
+
+        if (_reasonText != null && !string.IsNullOrEmpty(Reason))
+            _reasonText.text = Reason;
+        else if (_reasonText != null)
+            _reasonText.text = "Game Over.";
     }
 
     private void OnDestroy()
@@ -28,8 +37,7 @@ public class GameOverUI : MonoBehaviour
 
     private void OnRetryClicked()
     {
-        // No save data carried between scenes — reloading the game scene
-        // starts fresh from day 1.
+        Reason = "";
         if (_gameScene != null)
             SceneSystem.Load(_gameScene);
         else
@@ -38,6 +46,7 @@ public class GameOverUI : MonoBehaviour
 
     private void OnMainMenuClicked()
     {
+        Reason = "";
         if (_mainMenuScene != null)
             SceneSystem.Load(_mainMenuScene);
         else

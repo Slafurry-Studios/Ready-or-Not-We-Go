@@ -11,6 +11,7 @@ public class PendulumMiniGame : MonoBehaviour
     [SerializeField] private Image _pendulumImage;
     [SerializeField] private RectTransform _target;
     [SerializeField] private RectTransform _railing;
+    [SerializeField] private RectTransform _panel;
     [SerializeField] private SleepController _sleepController;
     [SerializeField] private TimeCounter _timeCounter;
     [SerializeField] private EnergyStatus _energyStatus;
@@ -87,6 +88,20 @@ public class PendulumMiniGame : MonoBehaviour
 
         SetPendulumPosition(LeftLimit);
         SetRandomTargetPosition();
+
+        Show();
+    }
+
+    public void Show()
+    {
+        if (_panel != null)
+            _panel.gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        if (_panel != null)
+            _panel.gameObject.SetActive(false);
     }
 
     private void Update()
