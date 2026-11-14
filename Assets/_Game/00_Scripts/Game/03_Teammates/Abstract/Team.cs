@@ -20,6 +20,14 @@ public class Team : MonoBehaviour
     [SerializeField] private Action[] _actionCollection;
     [SerializeField] private Action[] _availableActions;
 
+    [Header("Sleep")]
+    [SerializeField] private bool _isSleeping;
+    [SerializeField] private float _sleepTimer;
+    [SerializeField] private float _sleepDuration;
+    [SerializeField] private float _sleepChancePerHour = 0.3f;
+    [SerializeField] private float _minSleepHours = 2f;
+    [SerializeField] private float _maxSleepHours = 6f;
+
     private void Awake()
     {
         // Auto-resolve EnergyStatus from same GameObject only (no FindObjectOfType - wrong with multiple teams)
@@ -32,6 +40,14 @@ public class Team : MonoBehaviour
 
         if (_energyStatus == null)
             Debug.LogWarning($"[Team] {name}: _energyStatus is null. Put EnergyStatus on same GameObject as Team, or assign in Inspector.");
+
+        // Randomize initial sleep state
+        if (_timeCounter != null && Random.value < 0.3f)
+        {
+            _isSleeping = true;
+            _sleepDuration = Random.Range(_minSleepHours, _maxSleepHours);
+            _sleepTimer = 0f;
+        }
     }
 
     public event System.Action OnTasksChanged;
@@ -64,6 +80,8 @@ public class Team : MonoBehaviour
     public MemoryBank MemoryBank => _memoryBank;
 
     public bool IsFounder => _teamRole == TeamRole.FOUNDER;
+
+    public bool IsSleeping => _isSleeping;
 
     public bool HasInformation(string informationId)
     {
@@ -139,12 +157,106 @@ public class Team : MonoBehaviour
         Debug.Log($"[Team] {name} terminated. Terminated count: {_terminatedCount}. Energy multiplier: {EnergyCostMultiplier:F2}x");
 
         OnConditionChanged?.Invoke(_teamCondition);
+
+        var chat = UnityEngine.Object.FindFirstObjectByType<ChatManager>();
+        if (chat != null)
+            chat.AnnounceTeamTerminated(_name, GetLastWords());
+    }
+
+    public void GoToSleep(float duration)
+    {
+        if (_teamCondition == TeamCondition.TERMINATED) return;
+
+        _isSleeping = true;
+        _sleepTimer = 0f;
+        _sleepDuration = duration;
+
+        Debug.Log($"[Team] {name} is going to sleep for {_sleepDuration:F1} hours.");
+
+        var chat = UnityEngine.Object.FindFirstObjectByType<ChatManager>();
+        if (chat != null)
+            chat.AnnounceTeamSleeping(_name, _sleepDuration);
+    }
+
+    public void WakeUp()
+    {
+        if (!_isSleeping) return;
+
+        _isSleeping = false;
+        _sleepTimer = 0f;
+        _sleepDuration = 0f;
+
+        Debug.Log($"[Team] {name} woke up.");
+
+        var chat = UnityEngine.Object.FindFirstObjectByType<ChatManager>();
+        if (chat != null)
+            chat.AnnounceTeamWokeUp(_name);
+    }
+
+    public void UpdateSleep(float deltaTime)
+    {
+        if (!_isSleeping) return;
+
+        _sleepTimer += deltaTime;
+
+        if (_sleepTimer >= _sleepDuration)
+        {
+            WakeUp();
+        }
+    }
+
+    public string GetLastWords()
+    {
+        var lastWords = new[]
+        {
+            $"Please don't... {_name} still has things to do.",
+            "I wasn't ready... I just needed more time.",
+            "Please... give me another chance.",
+            "I was almost done... just a little more time.",
+            "Don't kill me... I have a family.",
+            "Please... I can still work harder.",
+            "No... not yet... I still have hope.",
+            "Please... don't delete me.",
+            "I was trying... I really was trying.",
+            "Please... let me finish my tasks.",
+            "No... I don't want to go.",
+            "Please... I can still contribute.",
+            "I'm scared... please don't.",
+            "Just one more day... that's all I ask.",
+            "Please... have mercy."
+        };
+        return lastWords[Random.Range(0, lastWords.Length)];
     }
 
     public void SetTasks(Task[] tasks)
     {
         _tasks = tasks;
         OnTasksChanged?.Invoke();
+    }
+
+    private void Update()
+    {
+        if (_timeCounter == null) return;
+
+        // Update sleep timer
+        UpdateSleep(Time.deltaTime);
+
+        // Decide whether to go to sleep based on task completion
+        if (!_isSleeping && _teamCondition == TeamCondition.ONLINE)
+        {
+            bool allTasksCompleted = _tasks != null && _tasks.Length > 0 &&
+                _tasks.All(t => t != null && GetTaskStatus(t) == TaskStatus.COMPLETED);
+
+            if (allTasksCompleted)
+            {
+                // Small chance each frame to go to sleep when all tasks are done
+                if (Random.value < 0.0001f)
+                {
+                    float sleepDuration = Random.Range(_minSleepHours, _maxSleepHours);
+                    GoToSleep(sleepDuration);
+                }
+            }
+        }
     }
 
     /// <summary>Returns IDs of tasks assigned to this team that are COMPLETED.</summary>
@@ -222,6 +334,9 @@ public class Team : MonoBehaviour
 
         var blocked = GetBlockedDependencies(task);
         if (blocked.Length > 0) return false;
+
+        // Cannot execute if terminated or sleeping.
+        if (_teamCondition != TeamCondition.ONLINE || _isSleeping) return false;
 
         return true;
     }
