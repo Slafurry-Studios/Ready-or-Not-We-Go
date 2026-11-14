@@ -1,6 +1,7 @@
 using UnityEngine;
 using Slafurry.Systems.Scene;
 
+[System.Serializable]
 public class CallAuthoritiesExecution : ActionExecution
 {
     [Header("Proof Thresholds (MemoryBank.CurrentTotalSize)")]

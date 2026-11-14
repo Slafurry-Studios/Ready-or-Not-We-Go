@@ -18,7 +18,7 @@ public class Action : ScriptableObject
     [Header("Modifiers & Rewards")]
     [SerializeField] private Memory[] _informationGotten;
     [SerializeField] private Action[] _nextActions;
-    [SerializeField] private ActionExecution _actionExecution;
+    [SerializeReference] private ActionExecution _actionExecution;
 
     public string ActionId => _actionId;
     public string ActionName => _actionName;
