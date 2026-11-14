@@ -185,7 +185,7 @@ PrefabInstance:
     - target: {fileID: 4190506902420798739, guid: 35659514327731c5ea7001997aeb13a4,
         type: 3}
       propertyPath: _memoryBank.MaxSize
-      value: 24
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6310008014850152510, guid: 35659514327731c5ea7001997aeb13a4,
         type: 3}
@@ -290,7 +290,7 @@ PrefabInstance:
     - target: {fileID: 4190506902420798739, guid: 6c79a2cbd00e8a78c8c23d5d5fa093ad,
         type: 3}
       propertyPath: _memoryBank.MaxSize
-      value: 24
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6310008014850152510, guid: 6c79a2cbd00e8a78c8c23d5d5fa093ad,
         type: 3}
@@ -467,7 +467,7 @@ PrefabInstance:
     - target: {fileID: 4190506902420798739, guid: 3fd5a5131dfad08769156aa427171c32,
         type: 3}
       propertyPath: _memoryBank.MaxSize
-      value: 24
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6310008014850152510, guid: 3fd5a5131dfad08769156aa427171c32,
         type: 3}
@@ -755,6 +755,9 @@ MonoBehaviour:
   - {fileID: 142735680}
   - {fileID: 2043844998}
   _playerTeam: {fileID: 840027220}
+  _gameOverScene: {fileID: 0}
+  _winScene: {fileID: 0}
+  _mainMenuScene: {fileID: 0}
 --- !u!114 &375266259
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1400,7 +1403,7 @@ PrefabInstance:
     - target: {fileID: 4190506902420798739, guid: 8bd98f2fc9595d115adc2424de4d1eab,
         type: 3}
       propertyPath: _memoryBank.MaxSize
-      value: 24
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6310008014850152510, guid: 8bd98f2fc9595d115adc2424de4d1eab,
         type: 3}
@@ -2424,7 +2427,7 @@ PrefabInstance:
     - target: {fileID: 4190506902420798739, guid: 64ac809c588e48ffcb3a3a1da838e605,
         type: 3}
       propertyPath: _memoryBank.MaxSize
-      value: 24
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6310008014850152510, guid: 64ac809c588e48ffcb3a3a1da838e605,
         type: 3}
