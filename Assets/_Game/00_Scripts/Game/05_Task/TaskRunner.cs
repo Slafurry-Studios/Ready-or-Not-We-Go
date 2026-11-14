@@ -224,9 +224,15 @@ public class TaskRunner : MonoBehaviour
         }
 
         if (playerIncomplete)
+        {
+            GameOverUI.Reason = "You failed to complete all tasks before the deadline.";
             TriggerGameOver();
+        }
         else if (AllTasksComplete())
+        {
+            WinUI.Reason = "You completed all tasks before the deadline!";
             TriggerWin();
+        }
         // If player survived but tasks remain, game continues with inherited tasks.
     }
 
