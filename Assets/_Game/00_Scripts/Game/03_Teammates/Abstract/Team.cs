@@ -223,6 +223,9 @@ public class Team : MonoBehaviour
         var blocked = GetBlockedDependencies(task);
         if (blocked.Length > 0) return false;
 
+        // Cannot execute if terminated or inactive (sleeping).
+        if (_teamCondition != TeamCondition.ONLINE) return false;
+
         return true;
     }
 

@@ -40,6 +40,7 @@ public class MemberAI : MonoBehaviour, ITimedUpdate
     {
         if (_team == null || _taskRunner == null) return;
         if (_team.TeamRole == TeamRole.FOUNDER) return;
+        if (_team.TeamCondition != TeamCondition.ONLINE) return;
 
         if (_team.IsAnyTaskInProgress()) return;
 
