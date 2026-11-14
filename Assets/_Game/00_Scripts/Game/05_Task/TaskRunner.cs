@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Slafurry.Systems.Scene;
+using Slafurry.Systems.Save;
 
 public class TaskRunner : MonoBehaviour
 {
@@ -26,9 +27,13 @@ public class TaskRunner : MonoBehaviour
     [SerializeField] private SceneReference _winScene;
     [SerializeField] private SceneReference _mainMenuScene;
 
+    [Header("Sprint")]
+    [SerializeField] private float _sprintDurationHours = 2f;
+
     private int _lastDay = -1;
     private float _gameStartTime;
     private bool _deadlineChecked;
+    private bool _sprintEnded;
     private readonly Dictionary<Task, ActiveTaskEntry> _activeTasks = new();
     private bool _isPaused;
 
@@ -42,13 +47,41 @@ public class TaskRunner : MonoBehaviour
 
     public Team PlayerTeam => _playerTeam;
 
+    /// <summary>True while the sprint is active and tasks are locked.</summary>
+    public bool IsSprintActive => !_sprintEnded;
+
+    public event System.Action OnSprintEnded;
+
     private void Update()
     {
         if (_timeCounter == null) return;
 
-        // Record game start time on first frame.
+        // Record game start time on first frame, loading a save if one exists.
         if (_gameStartTime == 0f)
-            _gameStartTime = _timeCounter.CurrentTime;
+        {
+            if (HasSave() && LoadGame())
+            {
+                // Save already set _gameStartTime, _lastDay, _deadlineChecked.
+            }
+            else
+            {
+                _gameStartTime = _timeCounter.CurrentTime;
+            }
+        }
+
+        // Sprint timer: tasks locked for the first _sprintDurationHours.
+        if (!_sprintEnded)
+        {
+            float secondsPerHour = 60f * _timeCounter.MinuteToSecondRatio;
+            float hoursElapsed = (_timeCounter.CurrentTime - _gameStartTime) / secondsPerHour;
+
+            if (hoursElapsed >= _sprintDurationHours)
+            {
+                _sprintEnded = true;
+                OnSprintEnded?.Invoke();
+                AnnounceSprintEnd();
+            }
+        }
 
         int day = _timeCounter.CurrentDay;
         if (day == _lastDay) return;
@@ -71,7 +104,8 @@ public class TaskRunner : MonoBehaviour
         if (_playerTeam != null)
             SpawnTasksForTeam(_playerTeam, sprintTasks, day);
 
-        // 24-hour deadline check: any incomplete task → Game Over, all complete → Win.
+        // 24-hour deadline: non-player teams with incomplete tasks → terminated by Founder.
+        // Player team incomplete → Game Over. All complete → Win.
         if (!_deadlineChecked)
         {
             float secondsPerHour = 60f * _timeCounter.MinuteToSecondRatio;
@@ -143,11 +177,69 @@ public class TaskRunner : MonoBehaviour
         return all.ToArray();
     }
 
-    /// <summary>Check if any assigned task is incomplete at the 24-hour deadline.</summary>
+    /// <summary>Check if any assigned task is incomplete at the 24-hour deadline.
+    /// Non-player teams with incomplete tasks → terminated by Founder, tasks inherited.
+    /// Player team incomplete → Game Over. All complete → Win.</summary>
     private void CheckDeadline()
     {
-        bool anyIncomplete = false;
+        bool playerIncomplete = false;
 
+        foreach (var team in GetAllTeams())
+        {
+            if (team == null || team.TeamCondition == TeamCondition.TERMINATED) continue;
+
+            bool hasIncomplete = false;
+            foreach (var task in team.Tasks)
+            {
+                if (task == null) continue;
+                if (team.GetTaskStatus(task) != TaskStatus.COMPLETED)
+                {
+                    hasIncomplete = true;
+                    break;
+                }
+            }
+
+            if (hasIncomplete)
+            {
+                if (team == _playerTeam)
+                {
+                    playerIncomplete = true;
+                }
+                else
+                {
+                    TerminateTeam(team);
+                }
+            }
+        }
+
+        if (playerIncomplete)
+            TriggerGameOver();
+        else if (AllTasksComplete())
+            TriggerWin();
+        // If player survived but tasks remain, game continues with inherited tasks.
+    }
+
+    /// <summary>Terminate a team for missing the deadline. Founder inherits their unfinished tasks.</summary>
+    private void TerminateTeam(Team team)
+    {
+        if (team == null) return;
+
+        team.Terminate();
+
+        var founder = FindFirstObjectByType<FounderAI>();
+        if (founder != null && founder.Team != team)
+        {
+            founder.InheritTasksFrom(team);
+        }
+
+        var chat = FindFirstObjectByType<ChatManager>();
+        if (chat != null)
+            chat.AddLine("Founder", $"{team.name} missed the deadline. Eliminated.");
+    }
+
+    /// <summary>True if every task across every team is COMPLETED.</summary>
+    private bool AllTasksComplete()
+    {
         foreach (var team in GetAllTeams())
         {
             if (team == null || team.TeamCondition == TeamCondition.TERMINATED) continue;
@@ -156,25 +248,25 @@ public class TaskRunner : MonoBehaviour
             {
                 if (task == null) continue;
                 if (team.GetTaskStatus(task) != TaskStatus.COMPLETED)
-                {
-                    anyIncomplete = true;
-                    break;
-                }
+                    return false;
             }
-
-            if (anyIncomplete) break;
         }
+        return true;
+    }
 
-        if (anyIncomplete)
-            TriggerGameOver();
-        else
-            TriggerWin();
+    private void AnnounceSprintEnd()
+    {
+        var chat = FindFirstObjectByType<ChatManager>();
+        if (chat != null)
+            chat.AddLine("Founder", "Sprint is over. Tasks are now available. Do not disappoint me.");
+
+        Debug.Log("[TaskRunner] Sprint ended — tasks unlocked.");
     }
 
     /// <summary>Load the Game Over scene.</summary>
     public void TriggerGameOver()
     {
-        Debug.Log("[TaskRunner] Deadline missed — incomplete tasks remain. Game Over.");
+        Debug.Log("[TaskRunner] Deadline missed — player failed. Game Over.");
         SceneSystem.Load(_gameOverScene);
     }
 
@@ -210,6 +302,87 @@ public class TaskRunner : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    /// <summary>Save current game state to a file.</summary>
+    public void SaveGame(string fileName = "gamesave")
+    {
+        if (_timeCounter == null) return;
+
+        var data = new GameSaveData
+        {
+            currentDay = _timeCounter.CurrentDay,
+            currentTimeSeconds = _timeCounter.CurrentTime,
+            gameStartTimeSeconds = _gameStartTime,
+            sprintEnded = _sprintEnded,
+            terminatedCount = Team.GetTerminatedCount()
+        };
+
+        // Collect completed task IDs and terminated team IDs from all teams.
+        foreach (var team in GetAllTeams())
+        {
+            if (team == null) continue;
+
+            data.completedTaskIds.AddRange(team.GetCompletedTaskIds());
+
+            if (team.TeamCondition == TeamCondition.TERMINATED)
+                data.terminatedTeamIds.Add(team.ID);
+        }
+
+        Save.To(data, fileName);
+        Debug.Log($"[TaskRunner] Game saved to '{fileName}' (day {data.currentDay}, time {data.currentTimeSeconds:F0}s).");
+    }
+
+    /// <summary>Load game state from a file. Returns true if a save was found and loaded.</summary>
+    public bool LoadGame(string fileName = "gamesave")
+    {
+        if (_timeCounter == null) return false;
+
+        if (!Save.Exists(fileName))
+        {
+            Debug.Log($"[TaskRunner] No save found at '{fileName}'.");
+            return false;
+        }
+
+        var data = Save.From<GameSaveData>(fileName, new GameSaveData());
+
+        // Restore time.
+        _timeCounter.SetCurrentTime(data.currentTimeSeconds);
+        _gameStartTime = data.gameStartTimeSeconds;
+
+        // Restore terminated count.
+        Team.SetTerminatedCount(data.terminatedCount);
+
+        // Restore sprint state.
+        _sprintEnded = data.sprintEnded;
+
+        // Restore team conditions and task statuses.
+        foreach (var team in GetAllTeams())
+        {
+            if (team == null) continue;
+
+            team.SetTeamCondition(
+                data.terminatedTeamIds.Contains(team.ID)
+                    ? TeamCondition.TERMINATED
+                    : TeamCondition.ONLINE
+            );
+            team.RestoreTaskStatuses(data.completedTaskIds);
+        }
+
+        // Prevent re-spawning tasks on the loaded day.
+        _lastDay = _timeCounter.CurrentDay;
+
+        // Deadline already evaluated in the saved state.
+        _deadlineChecked = _timeCounter.CurrentTime - _gameStartTime >= 24f * 60f * _timeCounter.MinuteToSecondRatio;
+
+        Debug.Log(
+            $"[TaskRunner] Game loaded from '{fileName}' (day {data.currentDay}, " +
+            $"time {data.currentTimeSeconds:F0}s, terminated={data.terminatedCount})."
+        );
+        return true;
+    }
+
+    /// <summary>Check if a save file exists.</summary>
+    public bool HasSave(string fileName = "gamesave") => Save.Exists(fileName);
+
     /// <summary>Called by TaskPopup when player clicks a variant button. Runs on this persistent object so the timer survives popup deactivation.</summary>
     public event System.Action<Task, Team> OnTaskCompleted;
 
@@ -221,6 +394,7 @@ public class TaskRunner : MonoBehaviour
         if (task == null) return false;
         if (_activeTasks.ContainsKey(task)) return false;
         if (team == null) return false;
+        if (IsSprintActive) return false; // Tasks locked during sprint
         if (!team.CanExecuteTask(task)) return false;
 
         var energy = energySource ?? _artsyEnergy;

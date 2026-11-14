@@ -98,4 +98,11 @@ public class TimeCounter : MonoBehaviour
     public int CurrentDay => Mathf.Min(_maxDay, Mathf.FloorToInt(_currentTime / SecondsPerDay) + 1);
     public int CurrentHour => Mathf.FloorToInt((_currentTime % SecondsPerDay) / SecondsPerHour);
     public int CurrentMinute => Mathf.FloorToInt((_currentTime % SecondsPerHour) / _minuteToSecondRatio);
+
+    /// <summary>Set current in-game time (seconds). Used for save/load.</summary>
+    public void SetCurrentTime(float time)
+    {
+        _currentTime = Mathf.Clamp(time, 0f, _maxTime);
+        _tickTimer = 0f;
+    }
 }
