@@ -11,6 +11,8 @@ public class FounderAI : MonoBehaviour, ITimedUpdate
     [SerializeField] private float _searchInterval = 10f;
     [SerializeField] private float _chatInterval = 30f;
 
+    public Team Team => _team;
+
     private bool _registered;
     private float _searchTimer;
     private float _chatTimer;
