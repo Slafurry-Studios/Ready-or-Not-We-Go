@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Slafurry.Core.Abstract;
-using Slafurry.Utils.Pooling;
 using Slafurry.Utils.VFX;
 
 
@@ -19,18 +18,21 @@ namespace Slafurry.Systems.VFX
         {
             VFXSystem.Instance.Play(key, position, rotation);
         }
-        
     }
+
     public class VFXSystem : GameSystem<VFXSystem>
     {
         [SerializeField] private VFXEntry[] vfxEntries;
 
-        private readonly Dictionary<string, GenericPool<VFXCleaner>> _pools = new();
+        private readonly Dictionary<string, VFXEntry> _entries = new();
 
         public override IEnumerator Initialize()
         {
             foreach (var entry in vfxEntries)
-                _pools[entry.key] = new GenericPool<VFXCleaner>(entry.prefab, transform, entry.defaultCapacity, entry.maxSize);
+            {
+                if (entry == null || entry.prefab == null) continue;
+                _entries[entry.key] = entry;
+            }
 
             yield return null;
         }
@@ -40,15 +42,13 @@ namespace Slafurry.Systems.VFX
 
         public VFXCleaner Play(string key, Vector3 position, Quaternion rotation = default)
         {
-            if (!_pools.TryGetValue(key, out var pool))
+            if (!_entries.TryGetValue(key, out var entry))
             {
                 Debug.LogWarning($"[VFXSystem] VFX '{key}' not found.");
                 return null;
             }
 
-            VFXCleaner instance = pool.Get();
-            instance.transform.SetPositionAndRotation(position, rotation);
-            instance.SetPool(pool);
+            var instance = Object.Instantiate(entry.prefab, position, rotation);
             return instance;
         }
     }
