@@ -22,9 +22,9 @@ public class TaskRunner : MonoBehaviour
     [SerializeField] private Team _playerTeam;
 
     [Header("Game Loop")]
-    [SerializeField] private string _gameOverSceneName = "GameOver";
-    [SerializeField] private string _winSceneName = "Win";
-    [SerializeField] private string _mainMenuSceneName = "MainMenu";
+    [SerializeField] private SceneReference _gameOverScene;
+    [SerializeField] private SceneReference _winScene;
+    [SerializeField] private SceneReference _mainMenuScene;
 
     private int _lastDay = -1;
     private float _gameStartTime;
@@ -175,14 +175,14 @@ public class TaskRunner : MonoBehaviour
     public void TriggerGameOver()
     {
         Debug.Log("[TaskRunner] Deadline missed — incomplete tasks remain. Game Over.");
-        SceneSystem.Load(_gameOverSceneName);
+        SceneSystem.Load(_gameOverScene);
     }
 
     /// <summary>Load the Win scene.</summary>
     public void TriggerWin()
     {
         Debug.Log("[TaskRunner] All tasks completed before deadline. Win!");
-        SceneSystem.Load(_winSceneName);
+        SceneSystem.Load(_winScene);
     }
 
     /// <summary>Reset all state and reload the game scene from day 1 (used by Game Over Retry).</summary>
