@@ -12,6 +12,7 @@ namespace Slafurry.Systems.Save
         public int currentDay = 1;
         public float currentTimeSeconds = 0f;
         public float gameStartTimeSeconds = 0f;
+        public bool sprintEnded = false;
 
         [Header("Teams")]
         public int terminatedCount = 0;
