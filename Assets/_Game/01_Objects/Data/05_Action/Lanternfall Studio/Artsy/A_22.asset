@@ -19,7 +19,6 @@ MonoBehaviour:
   MinimumDay: 0
   _informationGotten: []
   _nextActions: []
-  _actionExecution: {fileID: 0}
   _minProofForSuccess: 10
   _winScene: {fileID: 11400000, guid: 9393b00622f7af846a289c86fe36d0a0, type: 2}
   _gameOverScene: {fileID: 11400000, guid: 09bf880e9dafd9a25a744fecd56e90b6, type: 2}
