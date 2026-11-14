@@ -42,6 +42,12 @@ public class Team : MonoBehaviour
     private static readonly Dictionary<Task, TaskStatus> _runtimeTaskStatus = new();
     private readonly Dictionary<string, Information> _gainedInformation = new();
 
+    private static int _terminatedCount;
+
+    public float EnergyCostMultiplier => Mathf.Pow(1.5f, _terminatedCount);
+
+    public static void ResetTerminatedCount() => _terminatedCount = 0;
+
     public string ID => _id;
     public string Name => _name;
     public TeamRole TeamRole => _teamRole;
@@ -112,6 +118,18 @@ public class Team : MonoBehaviour
     public void SetTeamCondition(TeamCondition condition)
     {
         _teamCondition = condition;
+        OnConditionChanged?.Invoke(_teamCondition);
+    }
+
+    public void Terminate()
+    {
+        if (_teamCondition == TeamCondition.TERMINATED) return;
+
+        _teamCondition = TeamCondition.TERMINATED;
+        _terminatedCount++;
+
+        Debug.Log($"[Team] {name} terminated. Terminated count: {_terminatedCount}. Energy multiplier: {EnergyCostMultiplier:F2}x");
+
         OnConditionChanged?.Invoke(_teamCondition);
     }
 
@@ -227,7 +245,7 @@ public class Team : MonoBehaviour
         if (_completedActions.ContainsKey(action)) return false;
 
         // Energy check
-        if (_energyStatus != null && _energyStatus.CurrentValue < action.EnergyUsed)
+        if (_energyStatus != null && _energyStatus.CurrentValue < action.EnergyUsed * EnergyCostMultiplier)
             return false;
 
         // Minimum day check
@@ -275,7 +293,7 @@ public class Team : MonoBehaviour
 
         // Deduct energy
         if (_energyStatus != null)
-            _energyStatus.AddValue(-action.EnergyUsed);
+            _energyStatus.AddValue(-action.EnergyUsed * EnergyCostMultiplier);
 
         // Grant information / memories
         if (action.InformationGotten != null)
