@@ -755,6 +755,9 @@ MonoBehaviour:
   - {fileID: 142735680}
   - {fileID: 2043844998}
   _playerTeam: {fileID: 840027220}
+  _gameOverScene: {fileID: 11400000, guid: 09bf880e9dafd9a25a744fecd56e90b6, type: 2}
+  _winScene: {fileID: 11400000, guid: 9393b00622f7af846a289c86fe36d0a0, type: 2}
+  _mainMenuScene: {fileID: 11400000, guid: 9fd6a2a74a7e55db08864a41fa939ac1, type: 2}
 --- !u!114 &375266259
 MonoBehaviour:
   m_ObjectHideFlags: 0
