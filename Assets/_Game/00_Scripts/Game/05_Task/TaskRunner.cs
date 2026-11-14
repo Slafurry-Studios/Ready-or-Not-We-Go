@@ -99,6 +99,8 @@ public class TaskRunner : MonoBehaviour
             {
                 if (team == null) continue;
                 if (team == _playerTeam) continue; // handled separately below
+                if (team.TeamCondition == TeamCondition.TERMINATED) continue;
+                if (team.IsSleeping) continue; // sleeping
 
                 SpawnTasksForTeam(team, sprintTasks, day);
             }

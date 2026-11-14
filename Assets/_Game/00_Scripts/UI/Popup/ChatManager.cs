@@ -153,7 +153,7 @@ public class ChatManager : MonoBehaviour
             $"Day {day}. Fresh start. Same expectations.",
             $"Another day. Another chance to fail. Day {day}.",
             $"Day {day} dawns. Get to work.",
-            $"{day}: Another rotation. Another sprint.",
+            $"Day {day}: Another rotation. Another sprint.",
             $"Day {day}. The grind continues.",
             $"Welcome to day {day}. Don't waste it.",
             $"Day {day} starts now. No excuses.",
@@ -163,7 +163,7 @@ public class ChatManager : MonoBehaviour
     }
 
     /// <summary>Announce that a team was terminated.</summary>
-    public void AnnounceTeamTerminated(string teamName)
+    public void AnnounceTeamTerminated(string teamName, string lastWords)
     {
         var lines = new[]
         {
@@ -179,5 +179,38 @@ public class ChatManager : MonoBehaviour
             $"{teamName} failed to meet standards. Removed."
         };
         AddLine("Founder", lines[Random.Range(0, lines.Length)]);
+        AddLine(teamName, lastWords);
+    }
+
+    /// <summary>Announce that a team went to sleep.</summary>
+    public void AnnounceTeamSleeping(string teamName, float duration)
+    {
+        var lines = new[]
+        {
+            $"{teamName} is going to sleep for {duration:F1} hours.",
+            $"{teamName} needs rest. Sleeping now.",
+            $"{teamName} is taking a break.",
+            $"{teamName} headed to bed.",
+            $"{teamName} is resting. Zzz...",
+            $"{teamName} needs a nap.",
+            $"{teamName} going offline for a while."
+        };
+        AddLine(teamName, lines[Random.Range(0, lines.Length)]);
+    }
+
+    /// <summary>Announce that a team woke up.</summary>
+    public void AnnounceTeamWokeUp(string teamName)
+    {
+        var lines = new[]
+        {
+            $"{teamName} is back online.",
+            $"{teamName} woke up.",
+            $"{teamName} is ready to work again.",
+            $"{teamName} is back.",
+            $"{teamName} returned from rest.",
+            $"{teamName} is awake and ready.",
+            $"{teamName} is back in action."
+        };
+        AddLine(teamName, lines[Random.Range(0, lines.Length)]);
     }
 }
