@@ -1,9 +1,10 @@
-# Sourdough-Starter
+# Ready or Not We Go
 Unity 6.3 LTS URP starter for Slafurry Studios — GameSystem base classes, Drive asset sync, and itch.io deploy included.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/9dee6058-b82a-43b4-ae26-eab6ffe699da" width="100%" alt="Sourdough-Starter banner" />
+  <img src="https://github.com/user-attachments/assets/b49f2851-d9e2-4985-a8b8-dbe821999162" width="100%" alt="Sourdough-Starter banner" />
 </p>
+
 
 <br>
 <p align="left">
